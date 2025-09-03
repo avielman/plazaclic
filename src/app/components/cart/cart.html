@@ -25,11 +25,11 @@
             <img [src]="item.product.imageUrl[0]" alt="{{ item.product.name }}" style="width: 50px; height: 50px; object-fit: cover; margin-right: 10px;">
             {{ item.product.name }}
           </td>
-          <td>{{ item.product.price | currency:'USD' }}</td>
+          <td>{{ item.product.price | currency:'Q ' }}</td>
           <td>
             <input type="number" [value]="item.quantity" (change)="updateQuantity(item, $event)" min="1" class="form-control" style="width: 80px;">
           </td>
-          <td>{{ item.product.price * item.quantity | currency:'USD' }}</td>
+          <td>{{ item.product.price * item.quantity | currency:'Q ' }}</td>
           <td>
             <button class="btn btn-danger btn-sm" (click)="removeItem(item.product.id)">Eliminar</button>
           </td>
@@ -38,7 +38,7 @@
     </table>
 
     <div class="d-flex justify-content-end align-items-center mt-4">
-      <h4 class="me-3">Total: {{ total$ | async | currency:'USD' }}</h4>
+      <h4 class="me-3">Total: {{ total$ | async | currency:'Q ' }}</h4>
       <button class="btn btn-warning me-2" (click)="clearCart()">Vaciar Carrito</button>
       <button class="btn btn-success" routerLink="/checkout">Proceder al Pago</button>
     </div>

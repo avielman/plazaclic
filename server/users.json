@@ -4,5 +4,11 @@
     "email": "avielman@gmail.com",
     "password": "Linux123@",
     "userType": "cliente"
+  },
+  {
+    "id": 2,
+    "email": "hvielman@outlook.com",
+    "password": "Linux123@",
+    "userType": "proveedor"
   }
 ]

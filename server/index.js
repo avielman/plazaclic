@@ -104,14 +104,20 @@ app.get('/api/products', (req, res) => {
     if (maxPrice) {
         products = products.filter(p => p.price <= parseFloat(maxPrice));
     }
-    if (brand) {
-        products = products.filter(p => p.brand.name.toLowerCase().includes(brand.toLowerCase()));
-    }
-    if (category) {
-        products = products.filter(p => p.category.toLowerCase().includes(category.toLowerCase()));
-    }
     if (name) {
         products = products.filter(p => p.name.toLowerCase().includes(name.toLowerCase()));
+    }
+
+    // Multi-select brand filter
+    if (brand) {
+        const selectedBrands = brand.split(',').map(b => b.toLowerCase());
+        products = products.filter(p => selectedBrands.includes(p.brand.name.toLowerCase()));
+    }
+
+    // Multi-select category filter
+    if (category) {
+        const selectedCategories = category.split(',').map(c => c.toLowerCase());
+        products = products.filter(p => selectedCategories.includes(p.category.toLowerCase()));
     }
 
     // Sorting

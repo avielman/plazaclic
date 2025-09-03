@@ -8,7 +8,7 @@
         <h4>Mis Productos</h4>
         <button class="btn btn-success" routerLink="/admin/add-product">Agregar Nuevo Producto</button>
       </div>
-      
+
       <table class="table table-striped">
         <thead>
           <tr>
@@ -21,7 +21,7 @@
         <tbody>
           <tr *ngFor="let product of products$ | async">
             <td>{{ product.name }}</td>
-            <td>{{ product.price | currency:'USD' }}</td>
+            <td>{{ product.price | currency:'Q ' }}</td>
             <td>{{ product.quantity }}</td>
             <td>
               <button class="btn btn-sm btn-primary me-2" [routerLink]="['/admin/edit-product', product.id]">Editar</button>
