@@ -1,0 +1,67 @@
+[
+  {
+    "id": 1,
+    "name": "iPhone 15",
+    "description": "The latest iPhone",
+    "price": 999,
+    "code": "IP15",
+    "quantity": 100,
+    "imageUrl": ["https://via.placeholder.com/300/000000/FFFFFF/?text=iPhone"],
+    "brand": { "id": 1, "name": "Apple" },
+    "category": "Smartphones",
+    "model": "Pro Max",
+    "ownerId": 1
+  },
+  {
+    "id": 2,
+    "name": "Galaxy S24",
+    "description": "The latest Samsung Galaxy",
+    "price": 899,
+    "code": "GS24",
+    "quantity": 150,
+    "imageUrl": ["https://via.placeholder.com/300/0000FF/FFFFFF/?text=Galaxy"],
+    "brand": { "id": 2, "name": "Samsung" },
+    "category": "Smartphones",
+    "model": "Ultra",
+    "ownerId": 2
+  },
+  {
+    "id": 3,
+    "name": "WH-1000XM5",
+    "description": "Noise Cancelling Headphones",
+    "price": 399,
+    "code": "SNXM5",
+    "quantity": 200,
+    "imageUrl": ["https://via.placeholder.com/300/FF0000/FFFFFF/?text=Headphones"],
+    "brand": { "id": 3, "name": "Sony" },
+    "category": "Audio",
+    "model": "WH-1000XM5",
+    "ownerId": 1
+  },
+  {
+    "id": 4,
+    "name": "MacBook Air",
+    "description": "Apple M3 chip",
+    "price": 1299,
+    "code": "MBA-M3",
+    "quantity": 50,
+    "imageUrl": ["https://via.placeholder.com/300/000000/FFFFFF/?text=MacBook"],
+    "brand": { "id": 1, "name": "Apple" },
+    "category": "Laptops",
+    "model": "M3",
+    "ownerId": 1
+  },
+  {
+    "id": 5,
+    "name": "Galaxy Book4",
+    "description": "Samsung's latest laptop",
+    "price": 1199,
+    "code": "GB4",
+    "quantity": 75,
+    "imageUrl": ["https://via.placeholder.com/300/0000FF/FFFFFF/?text=Galaxy+Book"],
+    "brand": { "id": 2, "name": "Samsung" },
+    "category": "Laptops",
+    "model": "Pro",
+    "ownerId": 2
+  }
+]

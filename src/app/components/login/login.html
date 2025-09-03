@@ -1,0 +1,35 @@
+<div class="row justify-content-center mt-5">
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header">
+        <h3 class="text-center">Iniciar Sesión</h3>
+      </div>
+      <div class="card-body">
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+          
+          <div class="mb-3">
+            <label for="email" class="form-label">Correo Electrónico</label>
+            <input type="email" id="email" formControlName="email" class="form-control">
+            <div *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched" class="text-danger mt-1">
+              <small *ngIf="loginForm.get('email')?.errors?.['required']">El email es requerido.</small>
+              <small *ngIf="loginForm.get('email')?.errors?.['email']">Ingrese un email válido.</small>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="password" class="form-label">Contraseña</label>
+            <input type="password" id="password" formControlName="password" class="form-control">
+            <div *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" class="text-danger mt-1">
+              <small *ngIf="loginForm.get('password')?.errors?.['required']">La contraseña es requerida.</small>
+            </div>
+          </div>
+
+          <div class="d-grid">
+            <button type="submit" class="btn btn-primary" [disabled]="loginForm.invalid">Ingresar</button>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

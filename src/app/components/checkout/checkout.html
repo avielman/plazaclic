@@ -1,0 +1,73 @@
+<div class="container mt-5">
+  <h2>Finalizar Compra</h2>
+  <hr>
+
+  <div class="row">
+    <div class="col-md-7">
+      <h4>Detalles del Pedido</h4>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Producto</th>
+            <th>Cantidad</th>
+            <th>Precio Unitario</th>
+            <th>Subtotal</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of cartItems$ | async">
+            <td>{{ item.product.name }}</td>
+            <td>{{ item.quantity }}</td>
+            <td>{{ item.product.price | currency:'USD' }}</td>
+            <td>{{ item.product.price * item.quantity | currency:'USD' }}</td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <th colspan="3" class="text-end">Total:</th>
+            <th>{{ total$ | async | currency:'USD' }}</th>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <div class="col-md-5">
+      <h4>Información de Envío y Pago</h4>
+      <form [formGroup]="checkoutForm" (ngSubmit)="placeOrder()">
+        <div class="mb-3">
+          <label for="name" class="form-label">Nombre Completo</label>
+          <input type="text" id="name" formControlName="name" class="form-control">
+        </div>
+        <div class="mb-3">
+          <label for="address" class="form-label">Dirección</label>
+          <input type="text" id="address" formControlName="address" class="form-control">
+        </div>
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label for="city" class="form-label">Ciudad</label>
+            <input type="text" id="city" formControlName="city" class="form-control">
+          </div>
+          <div class="col-md-6 mb-3">
+            <label for="zip" class="form-label">Código Postal</label>
+            <input type="text" id="zip" formControlName="zip" class="form-control">
+          </div>
+        </div>
+        <div class="mb-3">
+          <label for="country" class="form-label">País</label>
+          <input type="text" id="country" formControlName="country" class="form-control">
+        </div>
+
+        <div class="mb-3">
+          <label for="paymentMethod" class="form-label">Método de Pago</label>
+          <select id="paymentMethod" formControlName="paymentMethod" class="form-select">
+            <option value="credit_card">Tarjeta de Crédito</option>
+            <option value="paypal">PayPal</option>
+            <option value="bank_transfer">Transferencia Bancaria</option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn btn-success w-100" [disabled]="checkoutForm.invalid || (cartItems$ | async)?.length === 0">Realizar Pedido</button>
+      </form>
+    </div>
+  </div>
+</div>

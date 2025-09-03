@@ -1,0 +1,46 @@
+<div class="container mt-5">
+  <h2>Tu Carrito de Compras</h2>
+  <hr>
+
+  <div *ngIf="(cartItems$ | async)?.length === 0; else cartContent">
+    <div class="alert alert-info text-center">
+      Tu carrito está vacío. <a routerLink="/products">¡Explora nuestros productos!</a>
+    </div>
+  </div>
+
+  <ng-template #cartContent>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Producto</th>
+          <th>Precio</th>
+          <th>Cantidad</th>
+          <th>Subtotal</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of cartItems$ | async">
+          <td>
+            <img [src]="item.product.imageUrl[0]" alt="{{ item.product.name }}" style="width: 50px; height: 50px; object-fit: cover; margin-right: 10px;">
+            {{ item.product.name }}
+          </td>
+          <td>{{ item.product.price | currency:'USD' }}</td>
+          <td>
+            <input type="number" [value]="item.quantity" (change)="updateQuantity(item, $event)" min="1" class="form-control" style="width: 80px;">
+          </td>
+          <td>{{ item.product.price * item.quantity | currency:'USD' }}</td>
+          <td>
+            <button class="btn btn-danger btn-sm" (click)="removeItem(item.product.id)">Eliminar</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="d-flex justify-content-end align-items-center mt-4">
+      <h4 class="me-3">Total: {{ total$ | async | currency:'USD' }}</h4>
+      <button class="btn btn-warning me-2" (click)="clearCart()">Vaciar Carrito</button>
+      <button class="btn btn-success" routerLink="/checkout">Proceder al Pago</button>
+    </div>
+  </ng-template>
+</div>

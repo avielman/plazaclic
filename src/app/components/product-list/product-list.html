@@ -1,0 +1,103 @@
+<div class="container-fluid mt-3">
+  <div class="row">
+    <!-- Filters Sidebar -->
+    <div class="col-md-3">
+      <div class="card shadow-sm mb-3">
+        <div class="card-header bg-primary text-white">
+          Filtros y Ordenación
+        </div>
+        <div class="card-body">
+          <form [formGroup]="filterForm" (ngSubmit)="applyFilters()">
+            <div class="mb-3">
+              <label for="nameFilter" class="form-label">Nombre del Producto</label>
+              <input type="text" id="nameFilter" formControlName="name" class="form-control">
+            </div>
+
+            <!-- Brand Filter (Checklist) -->
+            <div class="mb-3">
+              <label class="form-label">Marca</label>
+              <div *ngFor="let brand of allBrands" class="form-check">
+                <input class="form-check-input" type="checkbox" [value]="brand" [checked]="brandsFormArray.value.includes(brand)" (change)="onBrandChange($event)">
+                <label class="form-check-label">{{ brand }}</label>
+              </div>
+            </div>
+
+            <!-- Category Filter (Checklist) -->
+            <div class="mb-3">
+              <label class="form-label">Categoría</label>
+              <div *ngFor="let category of allCategories" class="form-check">
+                <input class="form-check-input" type="checkbox" [value]="category" [checked]="categoriesFormArray.value.includes(category)" (change)="onCategoryChange($event)">
+                <label class="form-check-label">{{ category }}</label>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="minPrice" class="form-label">Precio Mín.</label>
+                <input type="number" id="minPrice" formControlName="minPrice" class="form-control">
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="maxPrice" class="form-label">Precio Máx.</label>
+                <input type="number" id="maxPrice" formControlName="maxPrice" class="form-control">
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="sortBy" class="form-label">Ordenar por</label>
+              <select id="sortBy" formControlName="sortBy" class="form-select">
+                <option value="name">Nombre</option>
+                <option value="price">Precio</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label for="sortOrder" class="form-label">Orden</label>
+              <select id="sortOrder" formControlName="sortOrder" class="form-select">
+                <option value="asc">Ascendente</option>
+                <option value="desc">Descendente</option>
+              </select>
+            </div>
+
+            <div class="d-grid gap-2">
+              <button type="submit" class="btn btn-primary">Aplicar Filtros</button>
+              <button type="button" class="btn btn-secondary" (click)="resetFilters()">Restablecer</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Product List -->
+    <div class="col-md-9">
+      <div class="row row-cols-1 row-cols-md-3 g-4">
+        <div *ngFor="let product of products$ | async" class="col">
+          <div class="card h-100 shadow-sm">
+            <div class="position-relative">
+              <img [src]="product.imageUrl[0]" class="card-img-top" [alt]="product.name">
+              <span *ngIf="product.imageUrl.length > 1" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-info">
+                +{{ product.imageUrl.length - 1 }}
+                <span class="visually-hidden">más imágenes</span>
+              </span>
+            </div>
+            <div class="card-body">
+              <h5 class="card-title">{{ product.name }}</h5>
+              <p class="card-text">
+                <strong>Marca:</strong> {{ product.brand.name }}<br>
+                <strong>Modelo:</strong> {{ product.model }}
+              </p>
+            </div>
+            <div class="card-footer">
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="fw-bold fs-5">${{ product.price }}</span>
+                <button class="btn btn-primary" (click)="addToCart(product)">Agregar al carrito</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="(products$ | async)?.length === 0" class="alert alert-info mt-3">
+        No se encontraron productos que coincidan con los filtros.
+      </div>
+    </div>
+  </div>
+</div>

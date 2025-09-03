@@ -1,0 +1,18 @@
+<div class="container mt-5">
+  <div class="text-center mb-4">
+    <h2>Nuestras Marcas</h2>
+    <p class="lead">Explora los productos de tus marcas favoritas.</p>
+  </div>
+  <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
+    <div *ngFor="let brand of brands$ | async" class="col">
+      <div class="card h-100 shadow-sm">
+        <a [routerLink]="['/products']" [queryParams]="{ brand: brand.name }" class="text-decoration-none text-dark">
+          <img [src]="brand.logoUrl" class="card-img-top" [alt]="brand.name">
+          <div class="card-body text-center">
+            <h5 class="card-title">{{ brand.name }}</h5>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
