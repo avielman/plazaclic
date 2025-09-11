@@ -13,7 +13,7 @@ export interface Product {
     quantity: number;
     imageUrl: string[];
     brand: Brand;
-    category: string;
+    category: string[];
     model: string;
     ownerId?: number;
 }

@@ -29,25 +29,39 @@
             <input type="text" id="code" formControlName="code" class="form-control">
         </div>
         <div class="col-md-4 mb-3">
-            <label for="category" class="form-label">Categoría</label>
-            <input type="text" id="category" formControlName="category" class="form-control">
-        </div>
-        <div class="col-md-4 mb-3">
             <label for="model" class="form-label">Modelo</label>
             <input type="text" id="model" formControlName="model" class_="form-control">
         </div>
     </div>
 
-    <!-- Image URLs -->
+    <!-- Brand Dropdown -->
     <div class="mb-3">
-      <label class="form-label">URLs de Imágenes</label>
+      <label for="brand" class="form-label">Marca</label>
+      <select id="brand" formControlName="brand" class="form-select">
+        <option value="">Seleccione una marca</option>
+        <option *ngFor="let brand of allBrands" [value]="brand">{{ brand }}</option>
+      </select>
+    </div>
+
+    <!-- Categories Checkboxes -->
+    <div class="mb-3">
+      <label class="form-label">Categorías</label>
+      <div *ngFor="let category of allCategories" class="form-check">
+        <input class="form-check-input" type="checkbox" [value]="category" [checked]="categoriesFormArray.value.includes(category)" (change)="onCategoryChange($event)">
+        <label class="form-check-label">{{ category }}</label>
+      </div>
+    </div>
+
+    <!-- Image Uploads -->
+    <div class="mb-3">
+      <label class="form-label">Imágenes del Producto</label>
       <div formArrayName="imageUrls">
         <div *ngFor="let imageUrlControl of imageUrls.controls; let i = index" class="input-group mb-2">
-          <input type="text" [formControlName]="i" class="form-control" placeholder="URL de la imagen">
+          <input type="file" class="form-control" (change)="onFileSelected($event, i)" accept="image/*">
           <button type="button" class="btn btn-outline-danger" (click)="removeImageUrl(i)">Eliminar</button>
         </div>
       </div>
-      <button type="button" class="btn btn-outline-primary" (click)="addImageUrl()">Añadir URL de Imagen</button>
+      <button type="button" class="btn btn-outline-primary" (click)="addFileInput()">Añadir Imagen</button>
     </div>
 
     <button type="submit" class="btn btn-primary" [disabled]="productForm.invalid">Guardar Producto</button>

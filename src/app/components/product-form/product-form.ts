@@ -20,6 +20,8 @@ export class ProductFormComponent implements OnInit {
   isEditMode = false;
   private productId: number | null = null;
   private currentUser: any;
+  allBrands: string[] = [];
+  allCategories: string[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -34,13 +36,9 @@ export class ProductFormComponent implements OnInit {
       price: ['', [Validators.required, Validators.min(0)]],
       quantity: ['', [Validators.required, Validators.min(0)]],
       code: ['', Validators.required],
-      category: ['', Validators.required],
       model: ['', Validators.required],
-      brand: this.fb.group({
-        id: [null],
-        name: ['', Validators.required],
-        logoUrl: ['']
-      }),
+      brand: ['', Validators.required], // Changed to single select string
+      categories: this.fb.array([]), // New FormArray for multiple categories
       imageUrl: this.fb.array([]) // Initialize as FormArray
     });
   }
@@ -52,6 +50,21 @@ export class ProductFormComponent implements OnInit {
       this.router.navigate(['/']);
       return;
     }
+
+    // Fetch all products initially to get unique brands and categories for filters
+    this.productService.getProducts().subscribe(products => {
+      this.allBrands = [...new Set(products.map(p => p.brand.name))];
+      // Flatten categories array before creating a Set of unique categories
+      this.allCategories = [...new Set(products.flatMap(p => p.category))];
+
+      // If in edit mode, patch categories FormArray
+      if (this.isEditMode && this.productId) {
+        const productToEdit = products.find(p => p.id === this.productId);
+        if (productToEdit && productToEdit.category) { // Use product.category
+          this.setCategories(productToEdit.category);
+        }
+      }
+    });
 
     this.route.paramMap.pipe(
       switchMap(params => {
@@ -69,8 +82,12 @@ export class ProductFormComponent implements OnInit {
         const product = products.find(p => p.id === this.productId);
         if (product) {
           this.productForm.patchValue(product);
+          // Patch brand name directly
+          this.productForm.get('brand')?.setValue(product.brand.name);
           // Populate imageUrl FormArray
           this.setImages(product.imageUrl);
+          // Populate categories FormArray
+          this.setCategories(product.category); // Use product.category
         }
       }
     });
@@ -80,7 +97,30 @@ export class ProductFormComponent implements OnInit {
     return this.productForm.get('imageUrl') as FormArray;
   }
 
-  addImageUrl(): void {
+  get categoriesFormArray(): FormArray {
+    return this.productForm.get('categories') as FormArray;
+  }
+
+  onFileSelected(event: Event, index?: number): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      const file = input.files[0];
+      const reader = new FileReader();
+      reader.onload = () => {
+        const base64String = reader.result as string;
+        if (index !== undefined) {
+          // Update existing image
+          this.imageUrls.at(index).setValue(base64String);
+        } else {
+          // Add new image
+          this.imageUrls.push(this.fb.control(base64String, Validators.required));
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  addFileInput(): void {
     this.imageUrls.push(this.fb.control('', Validators.required));
   }
 
@@ -88,10 +128,27 @@ export class ProductFormComponent implements OnInit {
     this.imageUrls.removeAt(index);
   }
 
+  onCategoryChange(event: any): void {
+    const category = event.target.value;
+    const checked = event.target.checked;
+    if (checked) {
+      this.categoriesFormArray.push(new FormControl(category));
+    } else {
+      const index = this.categoriesFormArray.controls.findIndex(x => x.value === category);
+      this.categoriesFormArray.removeAt(index);
+    }
+  }
+
   private setImages(imageUrls: string[]): void {
     const imageUrlFGs = imageUrls.map(url => this.fb.control(url, Validators.required));
     const imageUrlFormArray = this.fb.array(imageUrlFGs);
     this.productForm.setControl('imageUrl', imageUrlFormArray);
+  }
+
+  private setCategories(categories: string[]): void {
+    const categoryFGs = categories.map(category => this.fb.control(category));
+    const categoryFormArray = this.fb.array(categoryFGs);
+    this.productForm.setControl('categories', categoryFormArray);
   }
 
   onSubmit(): void {
@@ -101,6 +158,18 @@ export class ProductFormComponent implements OnInit {
     }
 
     const productData: Product = { ...this.productForm.value };
+
+    // Convert categories FormArray to comma-separated string for backend
+    productData.category = this.categoriesFormArray.value; // Assign directly as array
+
+    // Handle brand object for backend
+    const selectedBrandName = this.productForm.get('brand')?.value;
+    const selectedBrand = this.allBrands.find(b => b === selectedBrandName); // Find existing brand
+    if (selectedBrand) {
+      productData.brand = { id: 0, name: selectedBrand, logoUrl: '' }; // Dummy ID and logoUrl
+    } else {
+      productData.brand = { id: 0, name: selectedBrandName, logoUrl: '' }; // Use entered name
+    }
 
     if (this.isEditMode) {
       productData.id = this.productId!;
@@ -116,10 +185,6 @@ export class ProductFormComponent implements OnInit {
       });
     } else {
       productData.ownerId = this.currentUser.id;
-      // For new products, assign a dummy brand if not provided
-      if (!productData.brand || !productData.brand.name) {
-        productData.brand = { id: 999, name: 'Generica', logoUrl: '' };
-      }
       // For new products, assign a dummy image if not provided
       if (!productData.imageUrl || productData.imageUrl.length === 0) {
         productData.imageUrl = ['https://via.placeholder.com/300/CCCCCC/FFFFFF/?text=NoImage'];

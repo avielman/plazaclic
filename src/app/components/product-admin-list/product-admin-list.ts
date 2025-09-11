@@ -7,13 +7,13 @@ import { AuthService } from '../../services/auth';
 import { ProductService } from '../../services/product';
 
 @Component({
-  selector: 'app-admin-panel',
+  selector: 'app-product-admin-list',
   standalone: true,
   imports: [CommonModule, RouterLink],
-  templateUrl: './admin-panel.html',
-  styleUrls: ['./admin-panel.css']
+  templateUrl: './product-admin-list.html',
+  styleUrls: ['./product-admin-list.css']
 })
-export class AdminPanel implements OnInit {
+export class ProductAdminListComponent implements OnInit {
   products$!: Observable<Product[]>;
   currentUser: any;
 

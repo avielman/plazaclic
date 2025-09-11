@@ -7,11 +7,12 @@ import { Product } from '../../models/product.model';
 import { ProductService } from '../../services/product';
 import { CartService } from '../../services/cart';
 import { FormBuilder, FormGroup, ReactiveFormsModule, FormArray, FormControl } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-product-list',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule],
   templateUrl: './product-list.html',
   styleUrls: ['./product-list.css']
 })
@@ -42,7 +43,8 @@ export class ProductListComponent implements OnInit {
     // Fetch all products initially to get unique brands and categories for filters
     this.productService.getProducts().subscribe(products => {
       this.allBrands = [...new Set(products.map(p => p.brand.name))];
-      this.allCategories = [...new Set(products.map(p => p.category))];
+      // Flatten categories array before creating a Set of unique categories
+      this.allCategories = [...new Set(products.flatMap(p => p.category))];
 
       // Initialize FormArrays based on URL query params or default to all selected
       this.route.queryParams.pipe(take(1)).subscribe((queryParams: Params) => {

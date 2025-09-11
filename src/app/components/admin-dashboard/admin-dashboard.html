@@ -1,0 +1,18 @@
+<div class="container-fluid mt-3">
+  <div class="row">
+    <!-- Sidebar -->
+    <div class="col-md-3 bg-light sidebar">
+      <div class="list-group list-group-flush">
+        <a routerLink="/admin/company" routerLinkActive="active" class="list-group-item list-group-item-action py-2 ripple" ngClass="{ 'active': $location.path() === '/admin/company' }">Mi Empresa</a>
+        <a routerLink="/admin/products" routerLinkActive="active" class="list-group-item list-group-item-action py-2 ripple" ngClass="{ 'active': $location.path() === '/admin/products'; 'bg-primary': $location.path() === '/admin/products' }">Gestión de Productos</a>
+        <a routerLink="/admin/categories" routerLinkActive="active" class="list-group-item list-group-item-action py-2 ripple" ngClass="{ 'active': $location.path() === '/admin/categories' }">Gestión de Categorías</a>
+        <a routerLink="/admin/brands" routerLinkActive="active" class="list-group-item list-group-item-action py-2 ripple" ngClass="{ 'active': $location.path() === '/admin/brands' }">Gestión de Marcas</a>
+      </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="col-md-9">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</div>

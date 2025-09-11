@@ -1,5 +1,5 @@
 <div class="container-fluid mt-3">
-  <div class="row">
+  <div class="row align-self-start">
     <!-- Filters Sidebar -->
     <div class="col-md-3">
       <div class="card shadow-sm mb-3">
@@ -24,7 +24,7 @@
 
             <!-- Category Filter (Checklist) -->
             <div class="mb-3">
-              <label class="form-label">Categoría</label>
+              <label class="form-label">Categorías</label>
               <div *ngFor="let category of allCategories" class="form-check">
                 <input class="form-check-input" type="checkbox" [value]="category" [checked]="categoriesFormArray.value.includes(category)" (change)="onCategoryChange($event)">
                 <label class="form-check-label">{{ category }}</label>
@@ -72,23 +72,25 @@
       <div class="row row-cols-1 row-cols-md-3 g-4">
         <div *ngFor="let product of products$ | async" class="col">
           <div class="card h-100 shadow-sm">
-            <div class="position-relative">
-              <img [src]="product.imageUrl[0]" class="card-img-top" [alt]="product.name">
-              <span *ngIf="product.imageUrl.length > 1" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-info">
-                +{{ product.imageUrl.length - 1 }}
-                <span class="visually-hidden">más imágenes</span>
-              </span>
-            </div>
-            <div class="card-body">
-              <h5 class="card-title">{{ product.name }}</h5>
-              <p class="card-text">
-                <strong>Marca:</strong> {{ product.brand.name }}<br>
-                <strong>Modelo:</strong> {{ product.model }}
-              </p>
-            </div>
+            <a [routerLink]="['/products', product.id]" class="text-decoration-none text-dark">
+              <div class="position-relative">
+                <img [src]="product.imageUrl[0].startsWith('data:image') ? product.imageUrl[0] : ('data:image/jpeg;base64,' + product.imageUrl[0])" class="card-img-top" [alt]="product.name">
+                <span *ngIf="product.imageUrl.length > 1" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-info">
+                  +{{ product.imageUrl.length - 1 }}
+                  <span class="visually-hidden">más imágenes</span>
+                </span>
+              </div>
+              <div class="card-body">
+                <h5 class="card-title">{{ product.name }}</h5>
+                <p class="card-text">
+                  <strong>Marca:</strong> {{ product.brand.name }}<br>
+                  <strong>Modelo:</strong> {{ product.model }}
+                </p>
+              </div>
+            </a>
             <div class="card-footer">
               <div class="d-flex justify-content-between align-items-center">
-                <span class="fw-bold fs-5">Q {{ product.price }}</span>
+                <span class="fw-bold fs-5">${{ product.price }}</span>
                 <button class="btn btn-primary" (click)="addToCart(product)">Agregar al carrito</button>
               </div>
             </div>

@@ -1,0 +1,112 @@
+<div class="container mt-5">
+  <h2>Gestión de la Empresa</h2>
+  <hr>
+
+  <div *ngIf="!isAuthorized">
+    <div class="card">
+      <div class="card-header">
+        Autenticación Requerida
+      </div>
+      <div class="card-body">
+        <div class="mb-3">
+          <label for="password" class="form-label">Contraseña</label>
+          <input type="password" id="password" class="form-control" [(ngModel)]="passwordInput">
+          <div *ngIf="authError" class="text-danger">{{ authError }}</div>
+        </div>
+        <button class="btn btn-primary" (click)="authorize()">Autorizar</button>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="isAuthorized">
+    <form [formGroup]="companyForm" (ngSubmit)="saveCompany()">
+      <div class="d-flex justify-content-end mb-3">
+        <button type="submit" class="btn btn-success mt-2">Guardar</button>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="mb-3">
+            <label for="companyName" class="form-label">Nombre de la Empresa</label>
+            <input type="text" id="companyName" formControlName="companyName" class="form-control" [class.invalid-field]="companyForm.get('companyName')?.invalid && (companyForm.get('companyName')?.touched || companyForm.get('companyName')?.dirty)">
+          </div>
+          <div class="mb-3">
+            <label for="managerName" class="form-label">Nombre del Gerente</label>
+            <input type="text" id="managerName" formControlName="managerName" class="form-control" [class.invalid-field]="companyForm.get('managerName')?.invalid && (companyForm.get('managerName')?.touched || companyForm.get('managerName')?.dirty)">
+          </div>
+          <div class="mb-3">
+            <label for="dpi" class="form-label">DPI</label>
+            <input type="text" id="dpi" formControlName="dpi" class="form-control" [class.invalid-field]="companyForm.get('dpi')?.invalid && (companyForm.get('dpi')?.touched || companyForm.get('dpi')?.dirty)">
+          </div>
+          <div class="mb-3">
+            <label for="nit" class="form-label">NIT</label>
+            <input type="text" id="nit" formControlName="nit" class="form-control" [class.invalid-field]="companyForm.get('nit')?.invalid && (companyForm.get('nit')?.touched || companyForm.get('nit')?.dirty)">
+          </div>
+          <div class="mb-3">
+            <label for="tradeName" class="form-label">Nombre Comercial</label>
+            <input type="text" id="tradeName" formControlName="tradeName" class="form-control" [class.invalid-field]="companyForm.get('tradeName')?.invalid && (companyForm.get('tradeName')?.touched || companyForm.get('tradeName')?.dirty)">
+          </div>
+          <div class="mb-3">
+            <label for="legalName" class="form-label">Nombre Legal</label>
+            <input type="text" id="legalName" formControlName="legalName" class="form-control" [class.invalid-field]="companyForm.get('legalName')?.invalid && (companyForm.get('legalName')?.touched || companyForm.get('legalName')?.dirty)">
+          </div>
+          <div class="mb-3">
+            <label for="whatsapp" class="form-label">WhatsApp</label>
+            <input type="text" id="whatsapp" formControlName="whatsapp" class="form-control" [class.invalid-field]="companyForm.get('whatsapp')?.invalid && (companyForm.get('whatsapp')?.touched || companyForm.get('whatsapp')?.dirty)">
+          </div>
+          <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" id="email" formControlName="email" class="form-control" [class.invalid-field]="companyForm.get('email')?.invalid && (companyForm.get('email')?.touched || companyForm.get('email')?.dirty)">
+          </div>
+          <div class="mb-3">
+            <label for="phone" class="form-label">Teléfono</label>
+            <input type="text" id="phone" formControlName="phone" class="form-control" [class.invalid-field]="companyForm.get('phone')?.invalid && (companyForm.get('phone')?.touched || companyForm.get('phone')?.dirty)">
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <!-- Logo Upload Section -->
+          <div class="mb-3">
+            <label class="form-label">Logo de la Empresa</label>
+            <div class="d-flex align-items-center">
+              <img *ngIf="logoPreview" [src]="logoPreview" alt="Logo Preview" class="img-thumbnail me-3" style="max-width: 150px; max-height: 150px;">
+              <input type="file" class="form-control" (change)="onLogoSelected($event)" accept="image/*">
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="bank" class="form-label">Banco</label>
+            <input type="text" id="bank" formControlName="bank" class="form-control" [class.invalid-field]="companyForm.get('bank')?.invalid && (companyForm.get('bank')?.touched || companyForm.get('bank')?.dirty)">
+          </div>
+          <div class="mb-3">
+            <label for="accountType" class="form-label">Tipo de Cuenta</label>
+            <input type="text" id="accountType" formControlName="accountType" class="form-control" [class.invalid-field]="companyForm.get('accountType')?.invalid && (companyForm.get('accountType')?.touched || companyForm.get('accountType')?.dirty)">
+          </div>
+          <div class="mb-3">
+            <label for="accountNumber" class="form-label">Número de Cuenta</label>
+            <input type="text" id="accountNumber" formControlName="accountNumber" class="form-control" [class.invalid-field]="companyForm.get('accountNumber')?.invalid && (companyForm.get('accountNumber')?.touched || companyForm.get('accountNumber')?.dirty)">
+          </div>
+          <div class="mb-3">
+            <label for="facebook" class="form-label">Facebook</label>
+            <input type="text" id="facebook" formControlName="facebook" class="form-control">
+          </div>
+          <div class="mb-3">
+            <label for="youtube" class="form-label">YouTube</label>
+            <input type="text" id="youtube" formControlName="youtube" class="form-control">
+          </div>
+          <div class="mb-3">
+            <label for="instagram" class="form-label">Instagram</label>
+            <input type="text" id="instagram" formControlName="instagram" class="form-control">
+          </div>
+          <div class="mb-3">
+            <label for="x" class="form-label">X (Twitter)</label>
+            <input type="text" id="x" formControlName="x" class="form-control">
+          </div>
+          <div class="mb-3">
+            <label for="tiktok" class="form-label">TikTok</label>
+            <input type="text" id="tiktok" formControlName="tiktok" class="form-control">
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

@@ -8,7 +8,7 @@ const PORT = 3000;
 
 // Middleware
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '100mb' })); // Increased limit
 
 // --- DATABASE HELPERS ---
 const usersDbPath = path.join(__dirname, 'users.json');
@@ -17,15 +17,24 @@ const ordersDbPath = path.join(__dirname, 'orders.json');
 const inventoryMovementsDbPath = path.join(__dirname, 'inventory-movements.json');
 
 const readData = (dbPath) => {
-  if (!fs.existsSync(dbPath)) {
-    fs.writeFileSync(dbPath, JSON.stringify([]));
+  try {
+    if (!fs.existsSync(dbPath)) {
+      fs.writeFileSync(dbPath, JSON.stringify([]));
+    }
+    const data = fs.readFileSync(dbPath);
+    return JSON.parse(data);
+  } catch (error) {
+    console.error(`Error reading data from ${dbPath}:`, error);
+    return [];
   }
-  const data = fs.readFileSync(dbPath);
-  return JSON.parse(data);
 };
 
 const writeData = (dbPath, data) => {
-  fs.writeFileSync(dbPath, JSON.stringify(data, null, 2));
+  try {
+    fs.writeFileSync(dbPath, JSON.stringify(data, null, 2));
+  } catch (error) {
+    console.error(`Error writing data to ${dbPath}:`, error);
+  }
 };
 
 // Helper to record inventory movement
@@ -85,8 +94,8 @@ app.post('/api/auth/login', (req, res) => {
     return res.status(401).json({ message: 'Credenciales inválidas' });
   }
 
-  res.json({ 
-    message: 'Login exitoso', 
+  res.json({
+    message: 'Login exitoso',
     user: { id: user.id, email: user.email, userType: user.userType }
   });
 });
@@ -116,8 +125,28 @@ app.get('/api/products', (req, res) => {
 
     // Multi-select category filter
     if (category) {
+        // Primero, preparamos las categorías que el usuario seleccionó.
         const selectedCategories = category.split(',').map(c => c.toLowerCase());
-        products = products.filter(p => selectedCategories.includes(p.category.toLowerCase()));
+
+        // Ahora, filtramos los productos de forma segura.
+        products = products.filter(p => {
+            // Verificamos si la propiedad 'category' existe y es un array.
+            // Esto es crucial para evitar errores si no está presente o tiene otro formato.
+            if (p.category && Array.isArray(p.category)) {
+                // Usamos .some() para verificar si AL MENOS UNA categoría del producto
+                // está incluida en las categorías seleccionadas por el usuario.
+                return p.category.some(productCategory => {
+                    // Verificamos que cada categoría del producto sea un string válido.
+                    if (typeof productCategory === 'string') {
+                        return selectedCategories.includes(productCategory.toLowerCase());
+                    }
+                    // Si la categoría del producto no es un string, la descartamos.
+                    return false;
+                });
+            }
+            // Si el producto no tiene un array de categorías, lo descartamos.
+            return false;
+        });
     }
 
     // Sorting
@@ -153,8 +182,9 @@ app.get('/api/my-products/:ownerId', (req, res) => {
 
 // Add Product
 app.post('/api/products', (req, res) => {
+  console.log('POST /api/products received. Body:', req.body.name, req.body.imageUrl ? req.body.imageUrl.length + ' images' : 'no images');
   const products = readData(productsDbPath);
-  const newProduct = { 
+  const newProduct = {
     id: products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1,
     ...req.body
   };
@@ -167,10 +197,12 @@ app.post('/api/products', (req, res) => {
   }
 
   res.status(201).json(newProduct);
+  console.log('POST /api/products successful.');
 });
 
 // Update Product
 app.put('/api/products/:id', (req, res) => {
+  console.log('PUT /api/products/:id received. ID:', req.params.id, 'Body:', req.body.name, req.body.imageUrl ? req.body.imageUrl.length + ' images' : 'no images');
   let products = readData(productsDbPath);
   const productId = parseInt(req.params.id, 10);
   const updatedProduct = req.body;
@@ -178,6 +210,7 @@ app.put('/api/products/:id', (req, res) => {
   const index = products.findIndex(p => p.id === productId);
 
   if (index === -1) {
+    console.error('Product not found for update:', productId);
     return res.status(404).json({ message: 'Producto no encontrado' });
   }
 
@@ -198,10 +231,12 @@ app.put('/api/products/:id', (req, res) => {
   }
 
   res.json(products[index]);
+  console.log('PUT /api/products/:id successful.');
 });
 
 // Delete Product
 app.delete('/api/products/:id', (req, res) => {
+  console.log('DELETE /api/products/:id received. ID:', req.params.id);
   let products = readData(productsDbPath);
   const productId = parseInt(req.params.id, 10);
 
@@ -209,15 +244,18 @@ app.delete('/api/products/:id', (req, res) => {
   products = products.filter(p => p.id !== productId);
 
   if (products.length === initialLength) {
+    console.error('Product not found for deletion:', productId);
     return res.status(404).json({ message: 'Producto no encontrado' });
   }
 
   writeData(productsDbPath, products);
   res.status(204).send(); // No content for successful deletion
+  console.log('DELETE /api/products/:id successful.');
 });
 
 // --- ORDER ROUTES ---
 app.post('/api/orders', (req, res) => {
+  console.log('POST /api/orders received.', req.body.customerInfo.name);
   const orders = readData(ordersDbPath);
   const newOrder = {
     id: orders.length > 0 ? Math.max(...orders.map(o => o.id)) + 1 : 1,
@@ -227,10 +265,12 @@ app.post('/api/orders', (req, res) => {
   orders.push(newOrder);
   writeData(ordersDbPath, orders);
   res.status(201).json(newOrder);
+  console.log('POST /api/orders successful.');
 });
 
 // --- INVENTORY MOVEMENT ROUTES ---
 app.post('/api/inventory-movements', (req, res) => {
+  console.log('POST /api/inventory-movements received.', req.body.productId, req.body.type, req.body.quantity);
   const movements = readData(inventoryMovementsDbPath);
   const newMovement = {
     id: movements.length > 0 ? Math.max(...movements.map(m => m.id)) + 1 : 1,
@@ -240,9 +280,11 @@ app.post('/api/inventory-movements', (req, res) => {
   movements.push(newMovement);
   writeData(inventoryMovementsDbPath, movements);
   res.status(201).json(newMovement);
+  console.log('POST /api/inventory-movements successful.');
 });
 
 app.get('/api/inventory-movements/:productId', (req, res) => {
+  console.log('GET /api/inventory-movements/:productId received. Product ID:', req.params.productId);
   const movements = readData(inventoryMovementsDbPath);
   const productId = parseInt(req.params.productId, 10);
 
@@ -252,8 +294,38 @@ app.get('/api/inventory-movements/:productId', (req, res) => {
 
   const productMovements = movements.filter(m => m.productId === productId);
   res.json(productMovements);
+  console.log('GET /api/inventory-movements/:productId successful.');
 });
 
+
+app.get('/api/company/:userId', (req, res) => {
+  const companies = readData(path.join(__dirname, 'company.json'));
+  const userId = parseInt(req.params.userId, 10);
+  if (isNaN(userId)) {
+    return res.status(400).json({ message: 'El ID de usuario debe ser un número' });
+  }
+  const company = companies.find(c => c.userId === userId);
+  if (!company) {
+    return res.status(404).json({ message: 'Empresa no encontrada' });
+  }
+  res.json(company);
+});
+
+app.put('/api/company/:userId', (req, res) => {
+  const companies = readData(path.join(__dirname, 'company.json'));
+  const userId = parseInt(req.params.userId, 10);
+  if (isNaN(userId)) {
+    return res.status(400).json({ message: 'El ID de usuario debe ser un número' });
+  }
+  const index = companies.findIndex(c => c.userId === userId);
+  if (index === -1) {
+    return res.status(404).json({ message: 'Empresa no encontrada' });
+  }
+  const updatedCompany = { ...companies[index], ...req.body, userId };
+  companies[index] = updatedCompany;
+  writeData(path.join(__dirname, 'company.json'), companies);
+  res.json(updatedCompany);
+});
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);

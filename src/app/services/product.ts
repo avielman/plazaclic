@@ -36,6 +36,10 @@ export class ProductService {
     return this.http.get<Product[]>(`${this.apiUrl}/products`, { params });
   }
 
+  getProductById(id: number): Observable<Product> {
+    return this.http.get<Product>(`${this.apiUrl}/products/${id}`);
+  }
+
   getProductsByBrand(brandName: string): Observable<Product[]> {
     // This method can now use the general getProducts with a brand filter
     return this.getProducts({ brand: brandName });

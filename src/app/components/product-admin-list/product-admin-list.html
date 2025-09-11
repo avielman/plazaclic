@@ -1,8 +1,5 @@
 <div class="container mt-5">
   <div *ngIf="currentUser">
-    <h2>Panel de Administración de {{ currentUser.email }}</h2>
-    <hr>
-
     <div *ngIf="currentUser.userType === 'proveedor'; else notSupplier">
       <div class="d-flex justify-content-between align-items-center mb-3">
         <h4>Mis Productos</h4>

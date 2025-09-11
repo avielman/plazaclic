@@ -1,0 +1,22 @@
+body {
+  font-family: 'Inter', sans-serif;
+}
+
+bg-title {
+    background-color: #b060c0;
+
+}
+
+:host {
+      display: block;
+    }
+
+#titulo {
+    font-size: x-large;
+    font-weight: bold;
+}
+
+.invalid-field {
+  border: 2px solid red !important;
+  box-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
+}
