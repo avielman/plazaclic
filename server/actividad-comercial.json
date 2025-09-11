@@ -1,0 +1,626 @@
+[
+  {
+    "activityName": "Consultoría de marketing digital",
+    "isActive": false
+  },
+  {
+    "activityName": "Servicios de contabilidad y auditoría",
+    "isActive": false
+  },
+  {
+    "activityName": "Asesoría legal",
+    "isActive": false
+  },
+  {
+    "activityName": "Consultoría financiera",
+    "isActive": false
+  },
+  {
+    "activityName": "Diseño gráfico y branding",
+    "isActive": false
+  },
+  {
+    "activityName": "Desarrollo de software a medida",
+    "isActive": false
+  },
+  {
+    "activityName": "Creación de sitios web",
+    "isActive": false
+  },
+  {
+    "activityName": "Gestión de redes sociales",
+    "isActive": false
+  },
+  {
+    "activityName": "Traducción e interpretación",
+    "isActive": false
+  },
+  {
+    "activityName": "Servicios de recursos humanos y reclutamiento",
+    "isActive": false
+  },
+  {
+    "activityName": "Fotografía y videografía profesional",
+    "isActive": false
+  },
+  {
+    "activityName": "Planificación de eventos",
+    "isActive": false
+  },
+  {
+    "activityName": "Coaching empresarial",
+    "isActive": false
+  },
+  {
+    "activityName": "Servicios de arquitectura y diseño de interiores",
+    "isActive": false
+  },
+  {
+    "activityName": "Redacción y edición de contenido",
+    "isActive": false
+  },
+  {
+    "activityName": "Servicios de seguridad informática",
+    "isActive": false
+  },
+  {
+    "activityName": "Análisis de datos",
+    "isActive": false
+  },
+  {
+    "activityName": "Mantenimiento de equipos de oficina",
+    "isActive": false
+  },
+  {
+    "activityName": "Capacitación y talleres",
+    "isActive": false
+  },
+  {
+    "activityName": "Consultoría de sostenibilidad",
+    "isActive": false
+  },
+  {
+    "activityName": "Venta de ropa y accesorios",
+    "isActive": false
+  },
+  {
+    "activityName": "Tienda de calzado",
+    "isActive": false
+  },
+  {
+    "activityName": "Joyería",
+    "isActive": false
+  },
+  {
+    "activityName": "Venta de productos electrónicos",
+    "isActive": false
+  },
+  {
+    "activityName": "Venta de artículos para el hogar",
+    "isActive": false
+  },
+  {
+    "activityName": "Librería y papelería",
+    "isActive": false
+  },
+  {
+    "activityName": "Juguetería",
+    "isActive": false
+  },
+  {
+    "activityName": "Venta de artículos deportivos",
+    "isActive": false
+  },
+  {
+    "activityName": "Supermercado",
+    "isActive": false
+  },
+  {
+    "activityName": "Tienda de conveniencia",
+    "isActive": false
+  },
+  {
+    "activityName": "Farmacia",
+    "isActive": false
+  },
+  {
+    "activityName": "Venta de productos orgánicos",
+    "isActive": false
+  },
+  {
+    "activityName": "Tienda de mascotas",
+    "isActive": false
+  },
+  {
+    "activityName": "Floristería",
+    "isActive": false
+  },
+  {
+    "activityName": "Venta de muebles",
+    "isActive": false
+  },
+  {
+    "activityName": "Tienda de herramientas y ferretería",
+    "isActive": false
+  },
+  {
+    "activityName": "Venta de antigüedades",
+    "isActive": false
+  },
+  {
+    "activityName": "Venta de café y té",
+    "isActive": false
+  },
+  {
+    "activityName": "Venta de productos de belleza y cuidado personal",
+    "isActive": false
+  },
+  {
+    "activityName": "Venta de instrumentos musicales",
+    "isActive": false
+  },
+  {
+    "activityName": "Fabricación de joyería artesanal",
+    "isActive": false
+  },
+  {
+    "activityName": "Cerámica y alfarería",
+    "isActive": false
+  },
+  {
+    "activityName": "Textiles y tejidos",
+    "isActive": false
+  },
+  {
+    "activityName": "Productos de cuero",
+    "isActive": false
+  },
+  {
+    "activityName": "Velas aromáticas",
+    "isActive": false
+  },
+  {
+    "activityName": "Jabones artesanales",
+    "isActive": false
+  },
+  {
+    "activityName": "Objetos de decoración",
+    "isActive": false
+  },
+  {
+    "activityName": "Dulces y repostería artesanal",
+    "isActive": false
+  },
+  {
+    "activityName": "Marcos y cuadros",
+    "isActive": false
+  },
+  {
+    "activityName": "Artesanía en madera",
+    "isActive": false
+  },
+  {
+    "activityName": "Productos de vidrio soplado",
+    "isActive": false
+  },
+  {
+    "activityName": "Lámparas decorativas",
+    "isActive": false
+  },
+  {
+    "activityName": "Mermeladas y conservas",
+    "isActive": false
+  },
+  {
+    "activityName": "Mantenimiento de hardware y software",
+    "isActive": false
+  },
+  {
+    "activityName": "Desarrollo de aplicaciones móviles",
+    "isActive": false
+  },
+  {
+    "activityName": "Cloud computing y servicios de hosting",
+    "isActive": false
+  },
+  {
+    "activityName": "Ciberseguridad",
+    "isActive": false
+  },
+  {
+    "activityName": "Soporte técnico",
+    "isActive": false
+  },
+  {
+    "activityName": "Venta de equipos y periféricos",
+    "isActive": false
+  },
+  {
+    "activityName": "Desarrollo de videojuegos",
+    "isActive": false
+  },
+  {
+    "activityName": "Servicios de inteligencia artificial",
+    "isActive": false
+  },
+  {
+    "activityName": "Big Data",
+    "isActive": false
+  },
+  {
+    "activityName": "Realidad virtual y aumentada",
+    "isActive": false
+  },
+  {
+    "activityName": "Soluciones de comercio electrónico",
+    "isActive": false
+  },
+  {
+    "activityName": "Sistemas de punto de venta (POS)",
+    "isActive": false
+  },
+  {
+    "activityName": "Servicios de internet de las cosas (IoT)",
+    "isActive": false
+  },
+  {
+    "activityName": "Fisioterapia",
+    "isActive": false
+  },
+  {
+    "activityName": "Nutrición",
+    "isActive": false
+  },
+  {
+    "activityName": "Psicología",
+    "isActive": false
+  },
+  {
+    "activityName": "Masajes terapéuticos",
+    "isActive": false
+  },
+  {
+    "activityName": "Centros de yoga y meditación",
+    "isActive": false
+  },
+  {
+    "activityName": "Gimnasios",
+    "isActive": false
+  },
+  {
+    "activityName": "Terapias alternativas",
+    "isActive": false
+  },
+  {
+    "activityName": "Servicios de spa y cuidado personal",
+    "isActive": false
+  },
+  {
+    "activityName": "Acupuntura",
+    "isActive": false
+  },
+  {
+    "activityName": "Entrenadores personales",
+    "isActive": false
+  },
+  {
+    "activityName": "Asesoría de imagen",
+    "isActive": false
+  },
+  {
+    "activityName": "Plomería",
+    "isActive": false
+  },
+  {
+    "activityName": "Electricidad",
+    "isActive": false
+  },
+  {
+    "activityName": "Carpintería",
+    "isActive": false
+  },
+  {
+    "activityName": "Pintura",
+    "isActive": false
+  },
+  {
+    "activityName": "Jardinería y paisajismo",
+    "isActive": false
+  },
+  {
+    "activityName": "Herrería",
+    "isActive": false
+  },
+  {
+    "activityName": "Reparación de electrodomésticos",
+    "isActive": false
+  },
+  {
+    "activityName": "Reparación de automóviles",
+    "isActive": false
+  },
+  {
+    "activityName": "Remodelación de interiores y exteriores",
+    "isActive": false
+  },
+  {
+    "activityName": "Limpieza de edificios",
+    "isActive": false
+  },
+  {
+    "activityName": "Restaurante",
+    "isActive": false
+  },
+  {
+    "activityName": "Bar y cafetería",
+    "isActive": false
+  },
+  {
+    "activityName": "Catering",
+    "isActive": false
+  },
+  {
+    "activityName": "Panadería y pastelería",
+    "isActive": false
+  },
+  {
+    "activityName": "Venta de productos gourmet",
+    "isActive": false
+  },
+  {
+    "activityName": "Producción de cerveza artesanal",
+    "isActive": false
+  },
+  {
+    "activityName": "Venta de jugos y batidos naturales",
+    "isActive": false
+  },
+  {
+    "activityName": "Food trucks",
+    "isActive": false
+  },
+  {
+    "activityName": "Producción de vino",
+    "isActive": false
+  },
+  {
+    "activityName": "Heladería",
+    "isActive": false
+  },
+  {
+    "activityName": "Tienda de delicatessen",
+    "isActive": false
+  },
+  {
+    "activityName": "Academias de idiomas",
+    "isActive": false
+  },
+  {
+    "activityName": "Clases de música",
+    "isActive": false
+  },
+  {
+    "activityName": "Escuelas de arte",
+    "isActive": false
+  },
+  {
+    "activityName": "Agencias de viajes",
+    "isActive": false
+  },
+  {
+    "activityName": "Guías turísticos",
+    "isActive": false
+  },
+  {
+    "activityName": "Organizadores de tours y excursiones",
+    "isActive": false
+  },
+  {
+    "activityName": "Servicios de fotografía y video",
+    "isActive": false
+  },
+  {
+    "activityName": "Alquiler de material deportivo",
+    "isActive": false
+  },
+  {
+    "activityName": "Cursos de programación",
+    "isActive": false
+  },
+  {
+    "activityName": "Tutorías escolares",
+    "isActive": false
+  },
+  {
+    "activityName": "Campamentos de verano",
+    "isActive": false
+  },
+  {
+    "activityName": "Fabricación de textiles",
+    "isActive": false
+  },
+  {
+    "activityName": "Producción de productos químicos",
+    "isActive": false
+  },
+  {
+    "activityName": "Ensamblaje de componentes electrónicos",
+    "isActive": false
+  },
+  {
+    "activityName": "Manufactura de alimentos y bebidas",
+    "isActive": false
+  },
+  {
+    "activityName": "Producción de maquinaria industrial",
+    "isActive": false
+  },
+  {
+    "activityName": "Hoteles y alojamientos",
+    "isActive": false
+  },
+  {
+    "activityName": "Servicios de alojamiento temporal",
+    "isActive": false
+  },
+  {
+    "activityName": "Agencias de viajes y tour operadores",
+    "isActive": false
+  },
+  {
+    "activityName": "Servicios de catering y banquetes",
+    "isActive": false
+  },
+  {
+    "activityName": "Servicios de transporte terrestre de carga",
+    "isActive": false
+  },
+  {
+    "activityName": "Servicios de transporte aéreo",
+    "isActive": false
+  },
+  {
+    "activityName": "Servicios de transporte marítimo",
+    "isActive": false
+  },
+  {
+    "activityName": "Almacenamiento y bodegaje",
+    "isActive": false
+  },
+  {
+    "activityName": "Gestión de cadenas de suministro",
+    "isActive": false
+  },
+  {
+    "activityName": "Cultivo de productos agrícolas",
+    "isActive": false
+  },
+  {
+    "activityName": "Ganadería",
+    "isActive": false
+  },
+  {
+    "activityName": "Producción de lácteos",
+    "isActive": false
+  },
+  {
+    "activityName": "Pesca y acuicultura",
+    "isActive": false
+  },
+  {
+    "activityName": "Servicios de fumigación y control de plagas",
+    "isActive": false
+  },
+  {
+    "activityName": "Banca",
+    "isActive": false
+  },
+  {
+    "activityName": "Servicios de seguros",
+    "isActive": false
+  },
+  {
+    "activityName": "Inversiones y gestión de activos",
+    "isActive": false
+  },
+  {
+    "activityName": "Préstamos y créditos",
+    "isActive": false
+  },
+  {
+    "activityName": "Asesoría financiera",
+    "isActive": false
+  },
+  {
+    "activityName": "Venta y alquiler de propiedades",
+    "isActive": false
+  },
+  {
+    "activityName": "Administración de propiedades",
+    "isActive": false
+  },
+  {
+    "activityName": "Corretaje de bienes raíces",
+    "isActive": false
+  },
+  {
+    "activityName": "Tasación de inmuebles",
+    "isActive": false
+  },
+  {
+    "activityName": "Desarrollo de proyectos inmobiliarios",
+    "isActive": false
+  },
+  {
+    "activityName": "Producción de películas y televisión",
+    "isActive": false
+  },
+  {
+    "activityName": "Medios de comunicación",
+    "isActive": false
+  },
+  {
+    "activityName": "Música y artes escénicas",
+    "isActive": false
+  },
+  {
+    "activityName": "Gestión de eventos y festivales",
+    "isActive": false
+  },
+  {
+    "activityName": "Parques de atracciones y temáticos",
+    "isActive": false
+  },
+  {
+    "activityName": "Tintorería y lavandería",
+    "isActive": false
+  },
+  {
+    "activityName": "Servicios de mensajería y paquetería",
+    "isActive": false
+  },
+  {
+    "activityName": "Venta y alquiler de inmuebles",
+    "isActive": false
+  },
+  {
+    "activityName": "Cuidado de niños y ancianos",
+    "isActive": false
+  },
+  {
+    "activityName": "Estaciones de servicio",
+    "isActive": false
+  },
+  {
+    "activityName": "Servicios funerarios",
+    "isActive": false
+  },
+  {
+    "activityName": "Venta de flores y plantas",
+    "isActive": false
+  },
+  {
+    "activityName": "Salón de belleza y peluquería",
+    "isActive": false
+  },
+  {
+    "activityName": "Mantenimiento de piscinas",
+    "isActive": false
+  },
+  {
+    "activityName": "Guarderías",
+    "isActive": false
+  },
+  {
+    "activityName": "Servicios de impresión y copistería",
+    "isActive": false
+  },
+  {
+    "activityName": "Servicio de transporte de pasajeros",
+    "isActive": false
+  },
+  {
+    "activityName": "Mecánica general",
+    "isActive": false
+  }
+]

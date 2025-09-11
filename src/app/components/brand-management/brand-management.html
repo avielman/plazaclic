@@ -1,1 +1,48 @@
-<p>brand-management works!</p>
+<h2>Gestión de Marcas</h2>
+
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="card-title">{{ isEditing ? 'Editar Marca' : 'Nueva Marca' }}</h5>
+    <form [formGroup]="brandForm" (ngSubmit)="onSubmit()">
+      <div class="mb-3">
+        <label for="name" class="form-label">Nombre</label>
+        <input type="text" id="name" formControlName="name" class="form-control">
+      </div>
+      <div class="mb-3">
+        <label for="imagen" class="form-label">Imagen</label>
+        <input type="file" id="imagen" (change)="onFileSelected($event)" class="form-control">
+      </div>
+      <button type="submit" class="btn btn-primary" [disabled]="brandForm.invalid && !isEditing">{{ isEditing ? 'Actualizar' : 'Crear' }}</button>
+      <button type="button" class="btn btn-secondary ms-2" (click)="resetForm()" *ngIf="isEditing">Cancelar</button>
+    </form>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-body">
+    <h5 class="card-title">Marcas Existentes</h5>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Imagen</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let brand of brands$ | async">
+          <td>{{ brand.id }}</td>
+          <td>{{ brand.name }}</td>
+          <td>
+            <img [src]="'http://localhost:3000/' + brand.imagen" alt="{{ brand.name }}" width="50" *ngIf="brand.imagen">
+          </td>
+          <td>
+            <button class="btn btn-sm btn-warning me-2" (click)="editBrand(brand)">Editar</button>
+            <button class="btn btn-sm btn-danger" (click)="deleteBrand(brand.id)">Eliminar</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

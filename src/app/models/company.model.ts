@@ -8,4 +8,20 @@ export interface Company {
     description?: string;
     logoUrl?: string;
     logoBase64?: string;
+    companyName: string;
+    managerName: string;
+    dpi: string;
+    nit: string;
+    tradeName: string;
+    businessActivity?: string;
+    legalName: string;
+    whatsapp: string;
+    facebook?: string;
+    youtube?: string;
+    instagram?: string;
+    x?: string;
+    tiktok?: string;
+    bank: string;
+    accountType: string;
+    accountNumber: string;
 }
