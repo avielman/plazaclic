@@ -17,7 +17,7 @@ export class BrandManagement implements OnInit {
   brandForm: FormGroup;
   isEditing = false;
   currentBrandId: number | null = null;
-  selectedFile: File | null = null;
+  selectedImageBase64: string | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -25,7 +25,7 @@ export class BrandManagement implements OnInit {
   ) {
     this.brandForm = this.fb.group({
       name: ['', Validators.required],
-      imagen: [null]
+      imagen: ['']
     });
   }
 
@@ -40,8 +40,16 @@ export class BrandManagement implements OnInit {
   onFileSelected(event: Event): void {
     const file = (event.target as HTMLInputElement).files?.[0];
     if (file) {
-      this.selectedFile = file;
+      this.convertFileToBase64(file);
     }
+  }
+
+  private convertFileToBase64(file: File): void {
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.selectedImageBase64 = reader.result as string;
+    };
+    reader.readAsDataURL(file);
   }
 
   onSubmit(): void {
@@ -49,19 +57,18 @@ export class BrandManagement implements OnInit {
       return;
     }
 
-    const formData = new FormData();
-    formData.append('name', this.brandForm.get('name')!.value);
-    if (this.selectedFile) {
-      formData.append('imagen', this.selectedFile, this.selectedFile.name);
-    }
+    const brandData = {
+      name: this.brandForm.get('name')!.value,
+      imagen: this.selectedImageBase64 || ''
+    };
 
     if (this.isEditing && this.currentBrandId) {
-      this.brandService.updateBrand(this.currentBrandId, formData).subscribe(() => {
+      this.brandService.updateBrand(this.currentBrandId, brandData).subscribe(() => {
         this.resetForm();
         this.loadBrands();
       });
     } else {
-      this.brandService.addBrand(formData).subscribe(() => {
+      this.brandService.addBrand(brandData).subscribe(() => {
         this.resetForm();
         this.loadBrands();
       });
@@ -71,6 +78,7 @@ export class BrandManagement implements OnInit {
   editBrand(brand: Brand): void {
     this.isEditing = true;
     this.currentBrandId = brand.id;
+    this.selectedImageBase64 = brand.imagen;
     this.brandForm.patchValue({
       name: brand.name
     });
@@ -85,7 +93,7 @@ export class BrandManagement implements OnInit {
   resetForm(): void {
     this.isEditing = false;
     this.currentBrandId = null;
-    this.selectedFile = null;
+    this.selectedImageBase64 = null;
     this.brandForm.reset();
     // Also reset the file input
     const fileInput = document.getElementById('imagen') as HTMLInputElement;

@@ -15,11 +15,11 @@ export class BrandService {
     return this.http.get<Brand[]>(this.apiUrl);
   }
 
-  addBrand(brandData: FormData): Observable<Brand> {
+  addBrand(brandData: { name: string; imagen: string }): Observable<Brand> {
     return this.http.post<Brand>(this.apiUrl, brandData);
   }
 
-  updateBrand(id: number, brandData: FormData): Observable<Brand> {
+  updateBrand(id: number, brandData: { name: string; imagen: string }): Observable<Brand> {
     return this.http.put<Brand>(`${this.apiUrl}/${id}`, brandData);
   }
 

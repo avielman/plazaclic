@@ -1,47 +1,38 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-  <div class="container-fluid">
-    <a class="navbar-brand" routerLink="/">PlazaClic</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Inicio</a>
+<nav style="background-color: black; padding: 10px;">
+  <div style="display: flex; justify-content: space-between; align-items: center;">
+    <div style="display: flex; align-items: center;">
+      <a style="color: white; text-decoration: none; font-weight: bold; margin-right: 20px;" routerLink="/">PlazaClic</a>
+      <ul style="list-style: none; display: flex; margin: 0; padding: 0;">
+        <li style="margin-right: 20px;">
+          <a style="color: white; text-decoration: none;" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Inicio</a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/products" routerLinkActive="active">Productos</a>
+        <li style="margin-right: 20px;">
+          <a style="color: white; text-decoration: none;" routerLink="/products" routerLinkActive="active">Productos</a>
         </li>
-      </ul>
-      <ul class="navbar-nav">
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/cart" routerLinkActive="active">
-            Carrito ({{ cartItemCount$ | async }})
-          </a>
-        </li>
-        <ng-container *ngIf="!(isLoggedIn$ | async)">
-          <li class="nav-item">
-            <a class="nav-link" routerLink="/login" routerLinkActive="active">Login</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" routerLink="/register" routerLinkActive="active">Registro</a>
-          </li>
-        </ng-container>
-        <ng-container *ngIf="isLoggedIn$ | async">
-          <li class="nav-item">
-            <a class="nav-link" routerLink="/admin" routerLinkActive="active">Admin</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" routerLink="/admin/categories" routerLinkActive="active">Categorías</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" routerLink="/admin/brands" routerLinkActive="active">Marcas</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" style="cursor: pointer;" (click)="logout()">Logout</a>
-          </li>
-        </ng-container>
       </ul>
     </div>
+    <ul style="list-style: none; display: flex; margin: 0; padding: 0;">
+      <li style="margin-right: 20px;">
+        <a style="color: white; text-decoration: none;" routerLink="/cart" routerLinkActive="active">
+          Carrito ({{ cartItemCount$ | async }})
+        </a>
+      </li>
+      <ng-container *ngIf="!(isLoggedIn$ | async)">
+        <li style="margin-right: 20px;">
+          <a style="color: white; text-decoration: none;" routerLink="/login" routerLinkActive="active">Login</a>
+        </li>
+        <li style="margin-right: 20px;">
+          <a style="color: white; text-decoration: none;" routerLink="/register" routerLinkActive="active">Registro</a>
+        </li>
+      </ng-container>
+      <ng-container *ngIf="isLoggedIn$ | async">
+        <li style="margin-right: 20px;">
+          <a style="color: white; text-decoration: none;" routerLink="/admin" routerLinkActive="active">Admin</a>
+        </li>
+        <li>
+          <a style="color: white; text-decoration: none; cursor: pointer;" (click)="logout()">Logout</a>
+        </li>
+      </ng-container>
+    </ul>
   </div>
 </nav>

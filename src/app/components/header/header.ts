@@ -22,6 +22,11 @@ export class HeaderComponent {
     this.cartItemCount$ = this.cartService.cartItems$.pipe(
       map(items => items.reduce((acc, item) => acc + item.quantity, 0))
     );
+
+    // Debug: Log the current login status
+    this.isLoggedIn$.subscribe(value => {
+      console.log('HeaderComponent - isLoggedIn$ value:', value);
+    });
   }
 
   logout(): void {

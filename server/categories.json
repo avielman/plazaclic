@@ -1,1 +1,26 @@
-[]
+[
+  {
+    "id": 1,
+    "name": "Celulares"
+  },
+  {
+    "id": 2,
+    "name": "Computadoras"
+  },
+  {
+    "id": 3,
+    "name": "Electrodomésticos"
+  },
+  {
+    "id": 4,
+    "name": "Ropa"
+  },
+  {
+    "id": 5,
+    "name": "Zapatos"
+  },
+  {
+    "id": 6,
+    "name": "Deportes"
+  }
+]

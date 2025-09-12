@@ -408,19 +408,19 @@ app.get('/api/brands', (req, res) => {
   res.json(brands);
 });
 
-app.post('/api/brands', upload.single('imagen'), (req, res) => {
+app.post('/api/brands', (req, res) => {
   const brands = readBrands();
   const newBrand = {
     id: brands.length > 0 ? Math.max(...brands.map(b => b.id)) + 1 : 1,
     name: req.body.name,
-    imagen: req.file ? `/uploads/brands/${req.file.filename}` : ''
+    imagen: req.body.imagen || ''
   };
   brands.push(newBrand);
   writeBrands(brands);
   res.status(201).json(newBrand);
 });
 
-app.put('/api/brands/:id', upload.single('imagen'), (req, res) => {
+app.put('/api/brands/:id', (req, res) => {
   const brands = readBrands();
   const brandId = parseInt(req.params.id, 10);
   const index = brands.findIndex(b => b.id === brandId);
@@ -428,8 +428,8 @@ app.put('/api/brands/:id', upload.single('imagen'), (req, res) => {
     return res.status(404).json({ message: 'Marca no encontrada' });
   }
   brands[index].name = req.body.name;
-  if (req.file) {
-    brands[index].imagen = `/uploads/brands/${req.file.filename}`;
+  if (req.body.imagen) {
+    brands[index].imagen = req.body.imagen;
   }
   writeBrands(brands);
   res.json(brands[index]);

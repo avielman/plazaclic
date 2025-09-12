@@ -1,8 +1,12 @@
-<h2>Gestión de Categorías</h2>
+<h2 class="fs-4 mb-3">
+    <strong>
+      Gestión de Categorías
+    </strong>
+</h2>
 
 <div class="card mb-4">
   <div class="card-body">
-    <h5 class="card-title">{{ isEditing ? 'Editar Categoría' : 'Nueva Categoría' }}</h5>
+    <h5 class="card-title fs-5">{{ isEditing ? 'Editar Categoría' : 'Nueva Categoría' }}</h5>
     <form [formGroup]="categoryForm" (ngSubmit)="onSubmit()">
       <div class="mb-3">
         <label for="name" class="form-label">Nombre</label>
@@ -16,7 +20,7 @@
 
 <div class="card">
   <div class="card-body">
-    <h5 class="card-title">Categorías Existentes</h5>
+    <h5 class="card-title fs-5">Categorías Existentes</h5>
     <table class="table table-striped">
       <thead>
         <tr>

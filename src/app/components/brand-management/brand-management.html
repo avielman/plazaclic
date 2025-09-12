@@ -1,8 +1,12 @@
-<h2>Gestión de Marcas</h2>
+<h2 class="fs-4 mb-3">
+    <strong>
+      Gestión de Marcas
+    </strong>
+</h2>
 
 <div class="card mb-4">
   <div class="card-body">
-    <h5 class="card-title">{{ isEditing ? 'Editar Marca' : 'Nueva Marca' }}</h5>
+    <h5 class="card-title fs-5">{{ isEditing ? 'Editar Marca' : 'Nueva Marca' }}</h5>
     <form [formGroup]="brandForm" (ngSubmit)="onSubmit()">
       <div class="mb-3">
         <label for="name" class="form-label">Nombre</label>
@@ -20,7 +24,7 @@
 
 <div class="card">
   <div class="card-body">
-    <h5 class="card-title">Marcas Existentes</h5>
+    <h5 class="card-title fs-5">Marcas Existentes</h5>
     <table class="table table-striped">
       <thead>
         <tr>
@@ -35,7 +39,7 @@
           <td>{{ brand.id }}</td>
           <td>{{ brand.name }}</td>
           <td>
-            <img [src]="'http://localhost:3000/' + brand.imagen" alt="{{ brand.name }}" width="50" *ngIf="brand.imagen">
+            <img [src]="brand.imagen.startsWith('data:') ? brand.imagen : 'http://localhost:3000/' + brand.imagen" alt="{{ brand.name }}" width="50" *ngIf="brand.imagen">
           </td>
           <td>
             <button class="btn btn-sm btn-warning me-2" (click)="editBrand(brand)">Editar</button>
