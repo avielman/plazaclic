@@ -58,6 +58,21 @@ const recordInventoryMovement = (productId, type, quantity, userId, notes = '') 
   writeData(inventoryMovementsDbPath, movements);
 };
 
+// Helper to calculate current quantity from movements
+const calculateCurrentQuantity = (productId) => {
+  const movements = readData(inventoryMovementsDbPath);
+  const productMovements = movements.filter(m => m.productId === productId && m.notes !== 'Initial stock');
+  let quantity = 0;
+  productMovements.forEach(m => {
+    if (m.type === 'entry') {
+      quantity += m.quantity;
+    } else if (m.type === 'exit') {
+      quantity -= m.quantity;
+    }
+  });
+  return quantity;
+};
+
 // Multer setup for file uploads
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -120,6 +135,12 @@ app.post('/api/auth/login', (req, res) => {
 // --- PRODUCT ROUTES ---
 app.get('/api/products', (req, res) => {
     let products = readData(productsDbPath);
+
+    // Calculate current quantities
+    products.forEach(p => {
+      const additional = calculateCurrentQuantity(p.id);
+      p.quantity += additional;
+    });
 
     // Filtering
     const { minPrice, maxPrice, brand, category, name } = req.query;
@@ -186,12 +207,18 @@ app.get('/api/products', (req, res) => {
 });
 
 app.get('/api/my-products/:ownerId', (req, res) => {
-    const products = readData(productsDbPath);
+    let products = readData(productsDbPath);
     const ownerId = parseInt(req.params.ownerId, 10);
 
     if (isNaN(ownerId)) {
         return res.status(400).json({ message: 'El ID del propietario debe ser un número' });
     }
+
+    // Calculate current quantities
+    products.forEach(p => {
+      const additional = calculateCurrentQuantity(p.id);
+      p.quantity += additional;
+    });
 
     const userProducts = products.filter(p => p.ownerId === ownerId);
     res.json(userProducts);
@@ -279,6 +306,15 @@ app.post('/api/orders', (req, res) => {
     ...req.body,
     orderDate: new Date().toISOString()
   };
+
+  // Record movements
+  if (newOrder.items && Array.isArray(newOrder.items)) {
+    newOrder.items.forEach(item => {
+      // Record inventory movement
+      recordInventoryMovement(item.productId, 'exit', item.quantity, newOrder.customerInfo.userId || 0, 'Order');
+    });
+  }
+
   orders.push(newOrder);
   writeData(ordersDbPath, orders);
   res.status(201).json(newOrder);
@@ -296,6 +332,7 @@ app.post('/api/inventory-movements', (req, res) => {
   };
   movements.push(newMovement);
   writeData(inventoryMovementsDbPath, movements);
+
   res.status(201).json(newMovement);
   console.log('POST /api/inventory-movements successful.');
 });

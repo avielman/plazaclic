@@ -4,9 +4,13 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormArray, For
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProductService } from '../../services/product';
 import { AuthService } from '../../services/auth';
+import { BrandService } from '../../services/brand';
+import { CategoryService } from '../../services/category';
 import { Product } from '../../models/product.model';
+import { Brand } from '../../models/brand.model';
+import { Category } from '../../models/category.model';
 import { switchMap } from 'rxjs/operators';
-import { of } from 'rxjs';
+import { of, forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-product-form',
@@ -28,14 +32,16 @@ export class ProductFormComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private productService: ProductService,
-    private authService: AuthService
+    private authService: AuthService,
+    private brandService: BrandService,
+    private categoryService: CategoryService
   ) {
     this.productForm = this.fb.group({
       name: ['', Validators.required],
       description: ['', Validators.required],
       price: ['', [Validators.required, Validators.min(0)]],
       quantity: ['', [Validators.required, Validators.min(0)]],
-      code: ['', Validators.required],
+      code: [{ value: '', disabled: true }, Validators.required],
       model: ['', Validators.required],
       brand: ['', Validators.required], // Changed to single select string
       categories: this.fb.array([]), // New FormArray for multiple categories
@@ -51,18 +57,30 @@ export class ProductFormComponent implements OnInit {
       return;
     }
 
-    // Fetch all products initially to get unique brands and categories for filters
-    this.productService.getProducts().subscribe(products => {
-      this.allBrands = [...new Set(products.map(p => p.brand.name))];
-      // Flatten categories array before creating a Set of unique categories
-      this.allCategories = [...new Set(products.flatMap(p => p.category))];
+    // Fetch brands and categories from their respective services
+    forkJoin({
+      brands: this.brandService.getBrands(),
+      categories: this.categoryService.getCategories()
+    }).subscribe(({ brands, categories }) => {
+      this.allBrands = brands.map(b => b.name);
+      this.allCategories = categories.map(c => c.name);
 
-      // If in edit mode, patch categories FormArray
+      // Generate code for new products
+      if (!this.isEditMode) {
+        this.generateProductCode();
+      }
+
+      // If in edit mode, fetch products for user and patch form
       if (this.isEditMode && this.productId) {
-        const productToEdit = products.find(p => p.id === this.productId);
-        if (productToEdit && productToEdit.category) { // Use product.category
-          this.setCategories(productToEdit.category);
-        }
+        this.productService.getProductsForUser(this.currentUser.id).subscribe(products => {
+          const productToEdit = products.find(p => p.id === this.productId);
+          if (productToEdit) {
+            this.productForm.patchValue(productToEdit);
+            this.productForm.get('brand')?.setValue(productToEdit.brand.name);
+            this.setImages(productToEdit.imageUrl);
+            this.setCategories(productToEdit.category);
+          }
+        });
       }
     });
 
@@ -72,25 +90,12 @@ export class ProductFormComponent implements OnInit {
         if (id) {
           this.isEditMode = true;
           this.productId = +id;
-          return this.productService.getProductsForUser(this.currentUser.id);
+          return of([]); // Already handled above
         } else {
           return of([]);
         }
       })
-    ).subscribe(products => {
-      if (this.isEditMode && products.length > 0) {
-        const product = products.find(p => p.id === this.productId);
-        if (product) {
-          this.productForm.patchValue(product);
-          // Patch brand name directly
-          this.productForm.get('brand')?.setValue(product.brand.name);
-          // Populate imageUrl FormArray
-          this.setImages(product.imageUrl);
-          // Populate categories FormArray
-          this.setCategories(product.category); // Use product.category
-        }
-      }
-    });
+    ).subscribe();
   }
 
   get imageUrls(): FormArray {
@@ -151,13 +156,30 @@ export class ProductFormComponent implements OnInit {
     this.productForm.setControl('categories', categoryFormArray);
   }
 
+  private generateProductCode(): void {
+    const timestamp = Date.now();
+    const codeNumber = (timestamp % 10000000).toString().padStart(7, '0');
+    const code = `STK${codeNumber}`;
+    this.productForm.get('code')?.setValue(code);
+  }
+
+  resetForm(): void {
+    this.productForm.reset();
+    this.isEditMode = false;
+    this.productId = null;
+  }
+
+  cancel(): void {
+    this.router.navigate(['/admin/products']);
+  }
+
   onSubmit(): void {
     if (this.productForm.invalid) {
       alert('Por favor, complete todos los campos requeridos.');
       return;
     }
 
-    const productData: Product = { ...this.productForm.value };
+    const productData: Product = { ...this.productForm.getRawValue() };
 
     // Convert categories FormArray to comma-separated string for backend
     productData.category = this.categoriesFormArray.value; // Assign directly as array

@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { Observable } from 'rxjs';
-import { Brand } from '../../models/product.model';
-import { ProductService } from '../../services/product';
+import { Brand } from '../../models/brand.model';
+import { BrandService } from '../../services/brand';
 
 @Component({
   selector: 'app-home',
@@ -15,10 +15,10 @@ import { ProductService } from '../../services/product';
 export class HomeComponent implements OnInit {
   brands$!: Observable<Brand[]>;
 
-  constructor(private productService: ProductService) { }
+  constructor(private brandService: BrandService) { }
 
   ngOnInit(): void {
-    this.brands$ = this.productService.getBrands();
+    this.brands$ = this.brandService.getBrands();
   }
 }
 

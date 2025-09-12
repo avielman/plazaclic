@@ -22,5 +22,17 @@
   {
     "id": 6,
     "name": "Deportes"
+  },
+  {
+    "id": 7,
+    "name": "Vape Cigarrillo Electrónico"
+  },
+  {
+    "id": 8,
+    "name": "Tecnología"
+  },
+  {
+    "id": 9,
+    "name": "Audífonos"
   }
 ]

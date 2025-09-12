@@ -1,6 +1,6 @@
 # Modificar Brand Management para guardar imagen como base64 en JSON
 
-## Tareas Pendientes
+## Tareas Completadas
 
 - [x] Modificar brand-management.ts: Convertir archivo a base64 en onFileSelected, cambiar onSubmit para enviar JSON en lugar de FormData
 - [x] Modificar brand.service.ts: Cambiar addBrand y updateBrand para enviar JSON en lugar de FormData

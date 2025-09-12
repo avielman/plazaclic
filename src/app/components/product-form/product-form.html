@@ -26,11 +26,11 @@
     <div class="row">
         <div class="col-md-4 mb-3">
             <label for="code" class="form-label">Código</label>
-            <input type="text" id="code" formControlName="code" class="form-control">
+            <input type="text" id="code" formControlName="code" class="form-control" readonly>
         </div>
         <div class="col-md-4 mb-3">
             <label for="model" class="form-label">Modelo</label>
-            <input type="text" id="model" formControlName="model" class_="form-control">
+            <input type="text" id="model" formControlName="model" class="form-control">
         </div>
     </div>
 
@@ -65,6 +65,6 @@
     </div>
 
     <button type="submit" class="btn btn-primary" [disabled]="productForm.invalid">Guardar Producto</button>
-    <button type="button" class="btn btn-secondary ms-2" routerLink="/admin">Cancelar</button>
+    <button type="button" class="btn btn-secondary ms-2" (click)="cancel()">Cancelar</button>
   </form>
 </div>

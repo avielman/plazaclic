@@ -3,16 +3,16 @@
     <h2>Nuestras Marcas</h2>
     <p class="lead">Explora los productos de tus marcas favoritas.</p>
   </div>
-  <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
-    <div *ngFor="let brand of brands$ | async" class="col">
-      <div class="card h-100 shadow-sm">
-        <a [routerLink]="['/products']" [queryParams]="{ brand: brand.name }" class="text-decoration-none text-dark">
-          <img [src]="brand.logoUrl" class="card-img-top" [alt]="brand.name">
-          <div class="card-body text-center">
-            <h5 class="card-title">{{ brand.name }}</h5>
-          </div>
-        </a>
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-6 g-3">
+      <div *ngFor="let brand of brands$ | async" class="col">
+        <div class="card h-100 shadow-sm" style="max-width: 150px;">
+          <a [routerLink]="['/products']" [queryParams]="{ brand: brand.name }" class="text-decoration-none text-dark">
+            <img [src]="brand.imagen" class="card-img-top" [alt]="brand.name" style="width: 100%; height: 100px; object-fit: contain;">
+            <div class="card-body text-center p-2">
+              <h5 class="card-title" style="font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ brand.name }}</h5>
+            </div>
+          </a>
+        </div>
       </div>
     </div>
-  </div>
 </div>
