@@ -61,16 +61,20 @@ const recordInventoryMovement = (productId, type, quantity, userId, notes = '') 
 // Helper to calculate current quantity from movements
 const calculateCurrentQuantity = (productId) => {
   const movements = readData(inventoryMovementsDbPath);
-  const productMovements = movements.filter(m => m.productId === productId && m.notes !== 'Initial stock');
+  const productMovements = movements.filter(m => m.productId === productId);
   let quantity = 0;
+  let initialQuantity = 0;
   productMovements.forEach(m => {
     if (m.type === 'entry') {
       quantity += m.quantity;
     } else if (m.type === 'exit') {
       quantity -= m.quantity;
     }
+    if (m.notes === 'Initial stock') {
+      initialQuantity = m.quantity;
+    }
   });
-  return quantity;
+  return quantity - initialQuantity;
 };
 
 // Multer setup for file uploads
@@ -332,6 +336,18 @@ app.post('/api/inventory-movements', (req, res) => {
   };
   movements.push(newMovement);
   writeData(inventoryMovementsDbPath, movements);
+
+  // Update product quantity in products.json
+  const products = readData(productsDbPath);
+  const productIndex = products.findIndex(p => p.id === req.body.productId);
+  if (productIndex !== -1) {
+    if (req.body.type === 'entry') {
+      products[productIndex].quantity += req.body.quantity;
+    } else if (req.body.type === 'exit') {
+      products[productIndex].quantity -= req.body.quantity;
+    }
+    writeData(productsDbPath, products);
+  }
 
   res.status(201).json(newMovement);
   console.log('POST /api/inventory-movements successful.');

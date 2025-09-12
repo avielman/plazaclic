@@ -22,6 +22,7 @@ export class InventoryComponent implements OnInit {
   movements$!: Observable<InventoryMovement[]>;
   productId!: number;
   productName: string = '';
+  productQuantity: number = 0;
   currentUser: any;
 
   constructor(
@@ -62,6 +63,7 @@ export class InventoryComponent implements OnInit {
     ).subscribe((product: Product | undefined | null) => {
       if (product) {
         this.productName = product.name;
+        this.productQuantity = product.quantity;
         this.loadMovements();
       } else {
         alert('Producto no encontrado o no tienes permiso para verlo.');
@@ -93,6 +95,14 @@ export class InventoryComponent implements OnInit {
         alert('Movimiento de inventario registrado con éxito!');
         this.movementForm.reset({ type: 'entry', quantity: null, notes: '' });
         this.loadMovements(); // Refresh list
+        // Reload product to update quantity
+        this.productService.getProductsForUser(this.currentUser.id).pipe(
+          map(products => products.find(p => p.id === this.productId))
+        ).subscribe(updatedProduct => {
+          if (updatedProduct) {
+            this.productQuantity = updatedProduct.quantity;
+          }
+        });
       },
       error: (err) => {
         console.error('Error al registrar movimiento:', err);

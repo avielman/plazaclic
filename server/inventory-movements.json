@@ -16,32 +16,5 @@
     "type": "entry",
     "quantity": 10,
     "notes": "Adquisición de nuevo producto."
-  },
-  {
-    "id": 0,
-    "productId": 6,
-    "userId": 2,
-    "date": "2025-09-12T01:35:55.818Z",
-    "type": "entry",
-    "quantity": 5,
-    "notes": "Adquisición de nuevo producto."
-  },
-  {
-    "id": 0,
-    "productId": 6,
-    "userId": 2,
-    "date": "2025-09-12T01:49:52.217Z",
-    "type": "entry",
-    "quantity": 5,
-    "notes": "Adquisición de nuevo producto."
-  },
-  {
-    "id": 0,
-    "productId": 6,
-    "userId": 2,
-    "date": "2025-09-12T02:00:13.085Z",
-    "type": "exit",
-    "quantity": 10,
-    "notes": "Venta del producto"
   }
 ]
