@@ -1,1 +1,96 @@
-<p>product-detail works!</p>
+<h1 class="fs-1 text-center">
+  <strong>
+    Detalle del Producto
+  </strong>
+</h1>
+
+<div class="container mt-4" *ngIf="product">
+  <div class="row">
+    <!-- Image Carousel Section -->
+    <div class="col-md-6">
+      <div class="image-carousel">
+        <!-- Main Image -->
+        <div class="main-image-container" [class.zoomed]="isZoomed">
+          <img
+            [src]="selectedImage || '/imagenes/product-not-available.jpg'"
+            [alt]="product!.name"
+            class="main-image"
+            (click)="toggleZoom()"
+            [style.cursor]="isZoomed ? 'zoom-out' : 'zoom-in'"
+          />
+        </div>
+
+        <!-- Thumbnail Images -->
+        <div class="thumbnails mt-3" *ngIf="product!.imageUrl.length > 1">
+          <div class="thumbnail-row">
+            <img
+              *ngFor="let image of product!.imageUrl; let i = index"
+              [src]="image"
+              [alt]="'Imagen ' + (i + 1)"
+              class="thumbnail"
+              [class.active]="i === selectedImageIndex"
+              (click)="selectImage(i)"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Product Information Section -->
+    <div class="col-md-6">
+      <div class="product-info">
+        <h1 class="product-title">{{ product!.name }}</h1>
+
+        <div class="product-details mb-4">
+          <div class="detail-row">
+            <strong>Marca:</strong> {{ product!.brand.name }}
+          </div>
+          <div class="detail-row">
+            <strong>Modelo:</strong> {{ product!.model }}
+          </div>
+          <div class="detail-row">
+            <strong>Categorías:</strong> {{ product!.category.join(', ') }}
+          </div>
+          <div class="detail-row">
+            <strong>Código:</strong> {{ product!.code }}
+          </div>
+          <div class="detail-row">
+            <strong>Disponible:</strong> {{ product!.quantity }} unidades
+          </div>
+        </div>
+
+        <div class="product-price mb-4">
+          <h2 class="price">Q {{ product!.price | number: '1.2-2' }}</h2>
+        </div>
+
+        <div class="product-description mb-4">
+          <h4>Descripción</h4>
+          <p>{{ product!.description }}</p>
+        </div>
+
+        <div class="action-buttons">
+          <button
+            class="btn btn-primary btn-lg me-3"
+            (click)="addToCart()"
+            [disabled]="product!.quantity <= 0"
+          >
+            <i class="fas fa-cart-plus"></i> Agregar al Carrito
+          </button>
+          <button class="btn btn-outline-secondary btn-lg">
+            <i class="fas fa-heart"></i> Favoritos
+          </button>
+        </div>
+
+        <div class="mt-3" *ngIf="product!.quantity <= 0">
+          <span class="text-danger">Producto agotado</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container mt-4" *ngIf="!product">
+  <div class="alert alert-info">
+    <h4>Cargando producto...</h4>
+  </div>
+</div>

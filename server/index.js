@@ -36,20 +36,40 @@ const readData = (dbPath) => {
 
 const writeData = (dbPath, data) => {
   try {
-    fs.writeFileSync(dbPath, JSON.stringify(data, null, 2));
+    const jsonString = JSON.stringify(data, null, 2);
+    fs.writeFileSync(dbPath, jsonString, 'utf8');
+    console.log(`[SUCCESS] Wrote ${data.length} items to ${path.basename(dbPath)}`);
+    logToFile(`Éxito: Escribió ${data.length} items a ${path.basename(dbPath)}`);
   } catch (error) {
-    console.error(`Error writing data to ${dbPath}:`, error);
+    console.error(`[ERROR] Failed to write to ${dbPath}:`, error.message);
+    console.error('Data length:', data.length);
+    console.error('Sample data:', JSON.stringify(data.slice(0, 2), null, 2));
+    logToFile(`Error al escribir a ${path.basename(dbPath)}: ${error.message}`, true);
+  }
+};
+
+// Logging helper function
+const logToFile = (message, isError = false) => {
+  const logPath = path.join(__dirname, 'registro.log');
+  const timestamp = new Date().toISOString();
+  const level = isError ? 'ERROR' : 'INFO';
+  const logEntry = `[${timestamp}] [${level}] ${message}\n`;
+  try {
+    fs.appendFileSync(logPath, logEntry, 'utf8');
+  } catch (error) {
+    console.error('Failed to write to registro.log:', error);
   }
 };
 
 // Helper to record inventory movement
-const recordInventoryMovement = (productId, type, quantity, userId, notes = '') => {
+const recordInventoryMovement = (productId, type, quantity, userId, notes = '', value = null) => {
   const movements = readData(inventoryMovementsDbPath);
   const newMovement = {
     id: movements.length > 0 ? Math.max(...movements.map(m => m.id)) + 1 : 1,
     productId,
     type,
     quantity,
+    ...(type === 'entry' && value !== null ? { value } : {}),
     date: new Date().toISOString(),
     userId,
     notes
@@ -58,24 +78,7 @@ const recordInventoryMovement = (productId, type, quantity, userId, notes = '') 
   writeData(inventoryMovementsDbPath, movements);
 };
 
-// Helper to calculate current quantity from movements
-const calculateCurrentQuantity = (productId) => {
-  const movements = readData(inventoryMovementsDbPath);
-  const productMovements = movements.filter(m => m.productId === productId);
-  let quantity = 0;
-  let initialQuantity = 0;
-  productMovements.forEach(m => {
-    if (m.type === 'entry') {
-      quantity += m.quantity;
-    } else if (m.type === 'exit') {
-      quantity -= m.quantity;
-    }
-    if (m.notes === 'Initial stock') {
-      initialQuantity = m.quantity;
-    }
-  });
-  return quantity - initialQuantity;
-};
+
 
 // Multer setup for file uploads
 const storage = multer.diskStorage({
@@ -139,12 +142,6 @@ app.post('/api/auth/login', (req, res) => {
 // --- PRODUCT ROUTES ---
 app.get('/api/products', (req, res) => {
     let products = readData(productsDbPath);
-
-    // Calculate current quantities
-    products.forEach(p => {
-      const additional = calculateCurrentQuantity(p.id);
-      p.quantity += additional;
-    });
 
     // Filtering
     const { minPrice, maxPrice, brand, category, name } = req.query;
@@ -217,12 +214,6 @@ app.get('/api/my-products/:ownerId', (req, res) => {
     if (isNaN(ownerId)) {
         return res.status(400).json({ message: 'El ID del propietario debe ser un número' });
     }
-
-    // Calculate current quantities
-    products.forEach(p => {
-      const additional = calculateCurrentQuantity(p.id);
-      p.quantity += additional;
-    });
 
     const userProducts = products.filter(p => p.ownerId === ownerId);
     res.json(userProducts);
@@ -301,6 +292,26 @@ app.delete('/api/products/:id', (req, res) => {
   console.log('DELETE /api/products/:id successful.');
 });
 
+// Get single product by ID
+app.get('/api/products/:id', (req, res) => {
+console.log('GET /api/products/:id received. ID:', req.params.id);
+const products = readData(productsDbPath);
+const productId = parseInt(req.params.id, 10);
+
+if (isNaN(productId)) {
+  return res.status(400).json({ message: 'El ID del producto debe ser un número válido' });
+}
+
+const product = products.find(p => p.id === productId);
+if (!product) {
+  console.error('Product not found:', productId);
+  return res.status(404).json({ message: 'Producto no encontrado' });
+}
+
+res.json(product);
+console.log('GET /api/products/:id successful.');
+});
+
 // --- ORDER ROUTES ---
 app.post('/api/orders', (req, res) => {
   console.log('POST /api/orders received.', req.body.customerInfo.name);
@@ -328,29 +339,60 @@ app.post('/api/orders', (req, res) => {
 // --- INVENTORY MOVEMENT ROUTES ---
 app.post('/api/inventory-movements', (req, res) => {
   console.log('POST /api/inventory-movements received.', req.body.productId, req.body.type, req.body.quantity);
+
+  // Parse and validate inputs
+  const productId = parseInt(req.body.productId, 10);
+  const quantity = parseFloat(req.body.quantity);
+  const type = req.body.type;
+  const value = type === 'entry' ? parseFloat(req.body.value) : null;
+
+  if (isNaN(productId)) {
+    return res.status(400).json({ message: 'El ID del producto debe ser un número válido' });
+  }
+  if (isNaN(quantity) || quantity <= 0) {
+    return res.status(400).json({ message: 'La cantidad debe ser un número positivo válido' });
+  }
+  if (type !== 'entry' && type !== 'exit') {
+    return res.status(400).json({ message: 'El tipo debe ser "entry" o "exit"' });
+  }
+  if (type === 'entry' && (isNaN(value) || value < 0)) {
+    return res.status(400).json({ message: 'Para entradas, el valor (costo) debe ser un número válido >= 0' });
+  }
+
   const movements = readData(inventoryMovementsDbPath);
   const newMovement = {
     id: movements.length > 0 ? Math.max(...movements.map(m => m.id)) + 1 : 1,
-    ...req.body,
-    date: new Date().toISOString()
+    productId,
+    type,
+    quantity,
+    ...(type === 'entry' ? { value } : {}),
+    date: new Date().toISOString(),
+    userId: req.body.userId,
+    notes: req.body.notes || ''
   };
   movements.push(newMovement);
   writeData(inventoryMovementsDbPath, movements);
 
   // Update product quantity in products.json
   const products = readData(productsDbPath);
-  const productIndex = products.findIndex(p => p.id === req.body.productId);
-  if (productIndex !== -1) {
-    if (req.body.type === 'entry') {
-      products[productIndex].quantity += req.body.quantity;
-    } else if (req.body.type === 'exit') {
-      products[productIndex].quantity -= req.body.quantity;
-    }
-    writeData(productsDbPath, products);
+  const productIndex = products.findIndex(p => p.id === productId);
+  if (productIndex === -1) {
+    console.error('[ERROR] Product not found for update:', productId);
+    return res.status(404).json({ message: 'Producto no encontrado' });
   }
+
+  console.log(`[DEBUG POST] Product ${productId} old quantity: ${products[productIndex].quantity}, type: ${type}, quantity: ${quantity}`);
+  if (type === 'entry') {
+    products[productIndex].quantity += quantity;
+  } else if (type === 'exit') {
+    products[productIndex].quantity -= quantity;
+  }
+  console.log(`[DEBUG POST] New quantity: ${products[productIndex].quantity}`);
+  writeData(productsDbPath, products);
 
   res.status(201).json(newMovement);
   console.log('POST /api/inventory-movements successful.');
+  logProductQuantity(productId, 'POST AFTER');
 });
 
 app.get('/api/inventory-movements/:productId', (req, res) => {
@@ -365,6 +407,126 @@ app.get('/api/inventory-movements/:productId', (req, res) => {
   const productMovements = movements.filter(m => m.productId === productId);
   res.json(productMovements);
   console.log('GET /api/inventory-movements/:productId successful.');
+});
+
+// Update inventory movement
+app.put('/api/inventory-movements/:id', (req, res) => {
+  console.log('PUT /api/inventory-movements/:id received. ID:', req.params.id);
+  const movementId = parseInt(req.params.id, 10);
+  const { type, quantity, value, notes } = req.body;
+
+  if (isNaN(movementId)) {
+    return res.status(400).json({ message: 'El ID del movimiento debe ser un número válido' });
+  }
+
+  let movements = readData(inventoryMovementsDbPath);
+  const movementIndex = movements.findIndex(m => m.id === movementId);
+  if (movementIndex === -1) {
+    return res.status(404).json({ message: 'Movimiento no encontrado' });
+  }
+
+  const oldMovement = movements[movementIndex];
+  const productId = oldMovement.productId;
+  logProductQuantity(productId, 'PUT BEFORE');
+
+  const oldEffect = oldMovement.type === 'entry' ? oldMovement.quantity : -oldMovement.quantity;
+
+  // Validate new data
+  if (type !== 'entry' && type !== 'exit') {
+    return res.status(400).json({ message: 'El tipo debe ser "entry" o "exit"' });
+  }
+  if (isNaN(quantity) || quantity <= 0) {
+    return res.status(400).json({ message: 'La cantidad debe ser un número positivo válido' });
+  }
+  if (type === 'entry' && (isNaN(value) || value < 0)) {
+    return res.status(400).json({ message: 'Para entradas, el valor (costo) debe ser un número válido >= 0' });
+  }
+
+  const newQuantity = parseFloat(quantity);
+  const newEffect = type === 'entry' ? newQuantity : -newQuantity;
+  const delta = newEffect - oldEffect;
+
+  // Update movement
+  movements[movementIndex] = {
+    ...oldMovement,
+    type,
+    quantity: newQuantity,
+    ...(type === 'entry' ? { value: parseFloat(value) } : {}),
+    notes: notes || '',
+    date: new Date().toISOString() // Update date on edit
+  };
+  writeData(inventoryMovementsDbPath, movements);
+
+  // Adjust product quantity
+  const products = readData(productsDbPath);
+  const productIndex = products.findIndex(p => p.id === productId);
+  if (productIndex !== -1) {
+    products[productIndex].quantity += delta;
+    writeData(productsDbPath, products);
+    logProductQuantity(productId, 'PUT AFTER');
+  } else {
+    console.error('Product not found for adjustment:', productId);
+  }
+
+  res.json(movements[movementIndex]);
+  console.log('PUT /api/inventory-movements/:id successful.');
+});
+
+// Update inventory movement
+app.put('/api/inventory-movements/:id', (req, res) => {
+  console.log('PUT /api/inventory-movements/:id received. ID:', req.params.id);
+  const movementId = parseInt(req.params.id, 10);
+  const { type, quantity, value, notes } = req.body;
+
+  if (isNaN(movementId)) {
+    return res.status(400).json({ message: 'El ID del movimiento debe ser un número válido' });
+  }
+
+  let movements = readData(inventoryMovementsDbPath);
+  const movementIndex = movements.findIndex(m => m.id === movementId);
+  if (movementIndex === -1) {
+    return res.status(404).json({ message: 'Movimiento no encontrado' });
+  }
+
+  const oldMovement = movements[movementIndex];
+  const oldEffect = oldMovement.type === 'entry' ? oldMovement.quantity : -oldMovement.quantity;
+
+  // Validate new data
+  if (type !== 'entry' && type !== 'exit') {
+    return res.status(400).json({ message: 'El tipo debe ser "entry" o "exit"' });
+  }
+  if (isNaN(quantity) || quantity <= 0) {
+    return res.status(400).json({ message: 'La cantidad debe ser un número positivo válido' });
+  }
+  if (type === 'entry' && (isNaN(value) || value < 0)) {
+    return res.status(400).json({ message: 'Para entradas, el valor (costo) debe ser un número válido >= 0' });
+  }
+
+  const newQuantity = parseFloat(quantity);
+  const newEffect = type === 'entry' ? newQuantity : -newQuantity;
+  const delta = newEffect - oldEffect;
+
+  // Update movement
+  movements[movementIndex] = {
+    ...oldMovement,
+    type,
+    quantity: newQuantity,
+    ...(type === 'entry' ? { value: parseFloat(value) } : {}),
+    notes: notes || '',
+    date: new Date().toISOString() // Update date on edit
+  };
+  writeData(inventoryMovementsDbPath, movements);
+
+  // Adjust product quantity
+  const products = readData(productsDbPath);
+  const productIndex = products.findIndex(p => p.id === oldMovement.productId);
+  if (productIndex !== -1) {
+    products[productIndex].quantity += delta;
+    writeData(productsDbPath, products);
+  }
+
+  res.json(movements[movementIndex]);
+  console.log('PUT /api/inventory-movements/:id successful.');
 });
 
 // --- COMPANY ROUTES ---
@@ -414,8 +576,10 @@ const readBrands = () => {
 const writeBrands = (data) => {
   try {
     fs.writeFileSync(brandDbPath, JSON.stringify(data, null, 2));
+    logToFile(`Éxito: Escribió ${data.length} marcas a brands.json`);
   } catch (error) {
     console.error('Error writing brands:', error);
+    logToFile(`Error al escribir marcas a brands.json: ${error.message}`, true);
   }
 };
 
@@ -435,8 +599,10 @@ const readCategories = () => {
 const writeCategories = (data) => {
   try {
     fs.writeFileSync(categoryDbPath, JSON.stringify(data, null, 2));
+    logToFile(`Éxito: Escribió ${data.length} categorías a categories.json`);
   } catch (error) {
     console.error('Error writing categories:', error);
+    logToFile(`Error al escribir categorías a categories.json: ${error.message}`, true);
   }
 };
 

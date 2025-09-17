@@ -16,4 +16,5 @@ export interface Product {
     category: string[];
     model: string;
     ownerId?: number;
+    imageSrc?: string; // Added to hold the processed image source
 }

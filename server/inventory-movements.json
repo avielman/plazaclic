@@ -4,17 +4,164 @@
     "productId": 6,
     "type": "entry",
     "quantity": 10,
+    "value": 0,
     "date": "2025-09-12T01:25:13.641Z",
     "userId": 2,
     "notes": "Initial stock"
   },
   {
-    "id": 0,
+    "id": 2,
     "productId": 6,
     "userId": 2,
     "date": "2025-09-12T01:28:02.658Z",
     "type": "entry",
     "quantity": 10,
+    "value": 0,
     "notes": "Adquisición de nuevo producto."
+  },
+  {
+    "id": 3,
+    "productId": 6,
+    "userId": 2,
+    "date": "2025-09-12T02:21:21.419Z",
+    "type": "exit",
+    "quantity": 5,
+    "notes": "Venta de producto."
+  },
+  {
+    "id": 4,
+    "productId": 6,
+    "userId": 2,
+    "date": "2025-09-12T02:28:00.227Z",
+    "type": "exit",
+    "quantity": 10,
+    "notes": "\tVenta de producto."
+  },
+  {
+    "id": 5,
+    "productId": 6,
+    "userId": 2,
+    "date": "2025-09-12T02:30:15.878Z",
+    "type": "entry",
+    "quantity": 10,
+    "value": 0,
+    "notes": "Adquisición de nuevo producto."
+  },
+  {
+    "id": 6,
+    "productId": 6,
+    "userId": 2,
+    "date": "2025-09-12T02:32:33.323Z",
+    "type": "entry",
+    "quantity": 10,
+    "value": 0,
+    "notes": "Adquisición de nuevo producto."
+  },
+  {
+    "id": 7,
+    "productId": 6,
+    "userId": 2,
+    "date": "2025-09-12T02:35:41.368Z",
+    "type": "entry",
+    "quantity": 5,
+    "value": 0,
+    "notes": "Adquisición de nuevo producto."
+  },
+  {
+    "id": 8,
+    "productId": 6,
+    "userId": 2,
+    "date": "2025-09-12T02:36:33.653Z",
+    "type": "entry",
+    "quantity": 10,
+    "value": 0,
+    "notes": "Adquisición de nuevo producto."
+  },
+  {
+    "id": 9,
+    "productId": 6,
+    "userId": 2,
+    "date": "2025-09-12T02:49:48.109Z",
+    "type": "entry",
+    "quantity": 5,
+    "value": 0,
+    "notes": "Adquisición de nuevo producto."
+  },
+  {
+    "id": 10,
+    "productId": 6,
+    "userId": 2,
+    "date": "2025-09-12T03:06:07.578Z",
+    "type": "exit",
+    "quantity": 5,
+    "notes": "Salida"
+  },
+  {
+    "id": 11,
+    "productId": 5,
+    "userId": 2,
+    "date": "2025-09-16T03:57:20.768Z",
+    "type": "entry",
+    "quantity": 75,
+    "value": 0,
+    "notes": "Initial stock"
+  },
+  {
+    "id": 0,
+    "productId": 5,
+    "userId": 2,
+    "date": "2025-09-16T04:18:14.323Z",
+    "type": "entry",
+    "quantity": 5,
+    "notes": "Compra Realizada",
+    "value": 1199
+  },
+  {
+    "id": 0,
+    "productId": 5,
+    "userId": 2,
+    "date": "2025-09-16T04:21:12.130Z",
+    "type": "exit",
+    "quantity": 10,
+    "notes": "Venta realizada"
+  },
+  {
+    "id": 0,
+    "productId": 5,
+    "userId": 2,
+    "date": "2025-09-16T04:27:12.905Z",
+    "type": "exit",
+    "quantity": 5,
+    "notes": "Venta Realizada"
+  },
+  {
+    "id": 0,
+    "productId": 5,
+    "userId": 2,
+    "date": "2025-09-16T06:15:24.685Z",
+    "type": "entry",
+    "quantity": 10,
+    "notes": "Compra Realizada",
+    "value": 1199
+  },
+  {
+    "id": 0,
+    "productId": 5,
+    "userId": 2,
+    "date": "2025-09-16T06:59:15.701Z",
+    "type": "entry",
+    "quantity": 75,
+    "notes": "Initial stock",
+    "value": 1199
+  },
+  {
+    "id": 0,
+    "productId": 5,
+    "userId": 2,
+    "date": "2025-09-16T06:59:58.850Z",
+    "type": "entry",
+    "quantity": 75,
+    "notes": "Initial stock",
+    "value": 1199
   }
 ]

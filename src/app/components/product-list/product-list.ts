@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgFor, NgIf } from '@angular/common';
 import { ActivatedRoute, Params } from '@angular/router';
 import { Observable, combineLatest } from 'rxjs';
-import { switchMap, startWith, take } from 'rxjs/operators';
+import { switchMap, startWith, take, map } from 'rxjs/operators';
 import { Product } from '../../models/product.model';
 import { ProductService } from '../../services/product';
 import { CartService } from '../../services/cart';
@@ -118,7 +118,14 @@ export class ProductListComponent implements OnInit {
     delete filters.brands;
     delete filters.categories;
 
-    this.products$ = this.productService.getFilteredAndSortedProducts(filters);
+    this.products$ = this.productService.getFilteredAndSortedProducts(filters).pipe(
+      map(products => products.map(product => ({
+        ...product,
+        imageSrc: product.imageUrl && product.imageUrl.length > 0
+          ? (product.imageUrl[0].startsWith('data:image') ? product.imageUrl[0] : 'data:image/jpeg;base64,' + product.imageUrl[0])
+          : './../public/imagenes/product-not-available.jpg'
+      })))
+    );
   }
 
   applyFilters(): void {

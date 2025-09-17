@@ -74,7 +74,7 @@
           <div class="card h-100 shadow-sm">
             <a [routerLink]="['/products', product.id]" class="text-decoration-none text-dark">
               <div class="position-relative">
-                <img [src]="product.imageUrl[0].startsWith('data:image') ? product.imageUrl[0] : ('data:image/jpeg;base64,' + product.imageUrl[0])" class="card-img-top" [alt]="product.name">
+                <img [src]="product.imageSrc" class="card-img-top" [alt]="product.name">
                 <span *ngIf="product.imageUrl.length > 1" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-info">
                   +{{ product.imageUrl.length - 1 }}
                   <span class="visually-hidden">más imágenes</span>

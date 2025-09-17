@@ -1,0 +1,159 @@
+.image-carousel {
+  position: relative;
+}
+
+.main-image-container {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #f8f9fa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  transition: all 0.3s ease;
+}
+
+.main-image-container.zoomed {
+  cursor: zoom-out;
+}
+
+.main-image-container:not(.zoomed) {
+  cursor: zoom-in;
+}
+
+.main-image {
+  max-width: 100%;
+  max-height: 400px;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+}
+
+.main-image-container.zoomed .main-image {
+  transform: scale(1.5);
+  max-height: none;
+  max-width: none;
+}
+
+.thumbnails {
+  display: flex;
+  justify-content: center;
+}
+
+.thumbnail-row {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 10px 0;
+}
+
+.thumbnail {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border: 2px solid transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.thumbnail:hover {
+  border-color: #007bff;
+  transform: scale(1.05);
+}
+
+.thumbnail.active {
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.product-info {
+  padding-left: 20px;
+}
+
+.product-title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.detail-row {
+  margin-bottom: 10px;
+  font-size: 1rem;
+}
+
+.detail-row strong {
+  color: #555;
+  margin-right: 10px;
+}
+
+.price {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #28a745;
+  margin: 0;
+}
+
+.product-description {
+  border-top: 1px solid #eee;
+  padding-top: 20px;
+}
+
+.product-description h4 {
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.product-description p {
+  color: #666;
+  line-height: 1.6;
+}
+
+.action-buttons {
+  margin-top: 30px;
+}
+
+.action-buttons .btn {
+  padding: 12px 24px;
+  font-size: 1.1rem;
+  border-radius: 6px;
+}
+
+.action-buttons .btn i {
+  margin-right: 8px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .product-info {
+    padding-left: 0;
+    margin-top: 20px;
+  }
+
+  .thumbnail-row {
+    justify-content: flex-start;
+  }
+
+  .thumbnail {
+    width: 60px;
+    height: 60px;
+  }
+
+  .main-image-container {
+    min-height: 300px;
+  }
+
+  .main-image {
+    max-height: 300px;
+  }
+
+  .product-title {
+    font-size: 1.5rem;
+  }
+
+  .price {
+    font-size: 2rem;
+  }
+}

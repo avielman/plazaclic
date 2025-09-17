@@ -23,7 +23,13 @@ export class InventoryComponent implements OnInit {
   productId!: number;
   productName: string = '';
   productQuantity: number = 0;
+  computedTotal: number = 0;
+  totalEntries: number = 0;
+  totalExits: number = 0;
   currentUser: any;
+  editingMode: boolean = false;
+  selectedMovement: InventoryMovement | null = null;
+  oldQuantity: number = 0;
 
   constructor(
     private fb: FormBuilder,
@@ -36,6 +42,7 @@ export class InventoryComponent implements OnInit {
     this.movementForm = this.fb.group({
       type: ['entry', Validators.required],
       quantity: [null, [Validators.required, Validators.min(1)]],
+      value: [null, [Validators.min(0)]],
       notes: ['']
     });
   }
@@ -72,42 +79,115 @@ export class InventoryComponent implements OnInit {
     });
   }
 
-  loadMovements(): void {
-    this.movements$ = this.inventoryService.getMovementHistory(this.productId);
+  onSelectMovement(movement: InventoryMovement): void {
+    this.selectedMovement = movement;
+    this.editingMode = false;
   }
 
-  recordMovement(): void {
-    if (this.movementForm.invalid) {
-      alert('Por favor, complete la cantidad y el tipo de movimiento.');
+  onEditMovement(): void {
+    if (!this.selectedMovement) return;
+
+    const password = prompt('Ingrese su contraseña para editar el movimiento:');
+    if (password !== 'Linux123@') {
+      alert('Contraseña incorrecta. No se puede editar el movimiento.');
       return;
     }
 
-    const movementData: InventoryMovement = {
-      id: 0, // Will be assigned by backend
-      productId: this.productId,
-      userId: this.currentUser.id,
-      date: new Date().toISOString(),
-      ...this.movementForm.value
-    };
-
-    this.inventoryService.recordMovement(movementData).subscribe({
-      next: () => {
-        alert('Movimiento de inventario registrado con éxito!');
-        this.movementForm.reset({ type: 'entry', quantity: null, notes: '' });
-        this.loadMovements(); // Refresh list
-        // Reload product to update quantity
-        this.productService.getProductsForUser(this.currentUser.id).pipe(
-          map(products => products.find(p => p.id === this.productId))
-        ).subscribe(updatedProduct => {
-          if (updatedProduct) {
-            this.productQuantity = updatedProduct.quantity;
-          }
-        });
-      },
-      error: (err) => {
-        console.error('Error al registrar movimiento:', err);
-        alert('Error al registrar movimiento: ' + (err.error.message || 'Error desconocido'));
-      }
+    this.editingMode = true;
+    this.oldQuantity = this.selectedMovement.quantity;
+    this.movementForm.patchValue({
+      type: this.selectedMovement.type,
+      quantity: this.selectedMovement.quantity,
+      value: this.selectedMovement.value || null,
+      notes: this.selectedMovement.notes || ''
     });
+  }
+
+  onCancelEdit(): void {
+    this.editingMode = false;
+    this.selectedMovement = null;
+    this.movementForm.reset({ type: 'entry', quantity: null, value: null, notes: '' });
+  }
+
+  loadMovements(): void {
+    this.movements$ = this.inventoryService.getMovementHistory(this.productId).pipe(
+      map(movements => {
+        this.totalEntries = movements
+          .filter(m => m.type === 'entry')
+          .reduce((sum, m) => sum + m.quantity, 0);
+        this.totalExits = movements
+          .filter(m => m.type === 'exit')
+          .reduce((sum, m) => sum + m.quantity, 0);
+        this.computedTotal = this.totalEntries - this.totalExits;
+        this.productQuantity = this.computedTotal;
+        return movements;
+      })
+    );
+  }
+
+  recordMovement(): void {
+    const formValue = this.movementForm.value;
+    const type = formValue.type;
+
+    if (this.movementForm.invalid) {
+      let errorMsg = 'Por favor, complete los campos requeridos.';
+      if (type === 'entry' && (!formValue.value || formValue.value < 0)) {
+        errorMsg += ' Para entradas, el valor (costo) debe ser un número positivo o cero.';
+      }
+      alert(errorMsg);
+      return;
+    }
+
+    if (this.editingMode && this.selectedMovement) {
+      // Update existing movement
+      const updateData = {
+        type,
+        quantity: formValue.quantity,
+        ...(type === 'entry' ? { value: formValue.value } : {}),
+        notes: formValue.notes || ''
+      };
+
+      this.inventoryService.updateMovement(this.selectedMovement.id, updateData).subscribe({
+        next: () => {
+          alert('Movimiento actualizado con éxito!');
+          this.editingMode = false;
+          this.selectedMovement = null;
+          this.movementForm.reset({ type: 'entry', quantity: null, value: null, notes: '' });
+          this.loadMovements(); // Refresh list
+        },
+        error: (err) => {
+          console.error('Error al actualizar movimiento:', err);
+          alert('Error al actualizar movimiento: ' + (err.error.message || 'Error desconocido'));
+        }
+      });
+    } else {
+      // Create new movement
+      const movementData: InventoryMovement = {
+        id: 0, // Will be assigned by backend
+        productId: this.productId,
+        userId: this.currentUser.id,
+        date: new Date().toISOString(),
+        type,
+        quantity: formValue.quantity,
+        notes: formValue.notes || ''
+      };
+
+      if (type === 'entry') {
+        movementData.value = formValue.value;
+      }
+
+      this.inventoryService.recordMovement(movementData).subscribe({
+        next: () => {
+          alert('Movimiento de inventario registrado con éxito!');
+          this.movementForm.reset({ type: 'entry', quantity: null, value: null, notes: '' });
+          this.loadMovements(); // Refresh list
+          // The computedTotal will update via the pipe in loadMovements
+        },
+        error: (err) => {
+          console.error('Error al registrar movimiento:', err);
+          alert('Error al registrar movimiento: ' + (err.error.message || 'Error desconocido'));
+        }
+      });
+    }
   }
 }

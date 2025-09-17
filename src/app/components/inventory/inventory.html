@@ -22,12 +22,21 @@
           <label for="quantity" class="form-label">Cantidad</label>
           <input type="number" id="quantity" formControlName="quantity" class="form-control">
         </div>
+        <div class="mb-3" *ngIf="movementForm.get('type')?.value === 'entry'">
+          <label for="value" class="form-label">Valor (Q) - Costo de la entrada</label>
+          <input type="number" id="value" formControlName="value" class="form-control" placeholder="0.00">
+          <div class="form-text">Ingrese el costo total en Quetzales para esta entrada.</div>
+        </div>
         <div class="mb-3">
           <label for="notes" class="form-label">Notas (Opcional)</label>
           <textarea id="notes" formControlName="notes" class="form-control"></textarea>
         </div>
-        <button type="submit" class="btn btn-primary" [disabled]="movementForm.invalid">Registrar Movimiento</button>
+        <button type="submit" class="btn btn-primary me-2" [disabled]="movementForm.invalid">
+          {{ editingMode ? 'Guardar Cambios' : 'Registrar Movimiento' }}
+        </button>
+        <button *ngIf="editingMode" type="button" class="btn btn-secondary" (click)="onCancelEdit()">Cancelar</button>
       </form>
+      <button *ngIf="selectedMovement && !editingMode" type="button" class="btn btn-warning ms-2" (click)="onEditMovement()" [disabled]="!selectedMovement">Editar</button>
     </div>
 
     <div class="col-md-6 mt-3 mb-2">
@@ -37,18 +46,21 @@
           <tr>
             <th>Tipo</th>
             <th>Cantidad</th>
+            <th>Valor (Q)</th>
             <th>Fecha</th>
             <th>Notas</th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let movement of movements$ | async">
+          <tr *ngFor="let movement of movements$ | async" (click)="onSelectMovement(movement)" [class.table-active]="selectedMovement?.id === movement.id" style="cursor: pointer;">
             <td>
               <span class="badge" [ngClass]="{'bg-success': movement.type === 'entry', 'bg-danger': movement.type === 'exit'}">
                 {{ movement.type === 'entry' ? 'Entrada' : 'Salida' }}
               </span>
             </td>
             <td>{{ movement.quantity }}</td>
+            <td *ngIf="movement.type === 'entry'">{{ movement.value | currency:'GTQ':'symbol':'1.2-2' }}</td>
+            <td *ngIf="movement.type === 'exit'">-</td>
             <td>{{ movement.date | date:'short' }}</td>
             <td>{{ movement.notes || '-' }}</td>
           </tr>
@@ -56,6 +68,18 @@
       </table>
       <div *ngIf="(movements$ | async)?.length === 0" class="alert alert-info">
         No hay movimientos de inventario registrados para este producto.
+      </div>
+
+      <div class="mt-4 p-3 bg-light border rounded">
+        <div class="mb-2">
+          <span class="badge bg-success-subtle text-success">Total Ingresos: {{ totalEntries }}</span>
+        </div>
+        <div class="mb-2">
+          <span class="badge bg-danger-subtle text-danger">Total Egresos: {{ totalExits }}</span>
+        </div>
+        <div class="mb-0">
+          <h5 class="text-primary">Total Calculado: {{ computedTotal }}</h5>
+        </div>
       </div>
     </div>
   </div>
