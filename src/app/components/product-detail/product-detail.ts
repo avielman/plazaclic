@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ProductService } from '../../services/product';
@@ -15,6 +15,9 @@ export class ProductDetail implements OnInit {
   product: Product | null = null;
   selectedImageIndex: number = 0;
   isZoomed: boolean = false;
+
+  showModal: boolean = false;
+  modalImageIndex: number = 0;
 
   constructor(
     private route: ActivatedRoute,
@@ -50,8 +53,35 @@ export class ProductDetail implements OnInit {
     }
   }
 
-  toggleZoom(): void {
-    this.isZoomed = !this.isZoomed;
+  onCarouselSlide(event: any): void {
+    // Update selectedImageIndex when carousel slides
+    this.selectedImageIndex = event.to;
+  }
+
+  openModal(index: number): void {
+    this.modalImageIndex = index;
+    this.showModal = true;
+  }
+
+  closeModal(): void {
+    this.showModal = false;
+  }
+
+  @HostListener('document:keydown.escape', ['$event'])
+  onEscapeKey(event: Event): void {
+    if (this.showModal) {
+      this.closeModal();
+    }
+  }
+
+  prevModalImage(): void {
+    if (!this.product) return;
+    this.modalImageIndex = (this.modalImageIndex - 1 + this.product.imageUrl.length) % this.product.imageUrl.length;
+  }
+
+  nextModalImage(): void {
+    if (!this.product) return;
+    this.modalImageIndex = (this.modalImageIndex + 1) % this.product.imageUrl.length;
   }
 
   addToCart(): void {
@@ -65,6 +95,13 @@ export class ProductDetail implements OnInit {
   get selectedImage(): string {
     if (this.product && this.product.imageUrl && this.product.imageUrl.length > 0) {
       return this.product.imageUrl[this.selectedImageIndex];
+    }
+    return '';
+  }
+
+  get modalImage(): string {
+    if (this.product && this.product.imageUrl && this.product.imageUrl.length > 0) {
+      return this.product.imageUrl[this.modalImageIndex];
     }
     return '';
   }

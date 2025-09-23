@@ -1,96 +1,136 @@
-<h1 class="fs-1 text-center">
-  <strong>
-    Detalle del Producto
-  </strong>
-</h1>
-
-<div class="container mt-4" *ngIf="product">
+<div class="container mt-5" *ngIf="product">
   <div class="row">
-    <!-- Image Carousel Section -->
-    <div class="col-md-6">
-      <div class="image-carousel">
-        <!-- Main Image -->
-        <div class="main-image-container" [class.zoomed]="isZoomed">
+    <div class="col-md-1 d-flex flex-column align-items-center">
+      <div class="d-flex flex-column gap-2">
+        <button
+          *ngFor="let image of product.imageUrl; let i = index"
+          type="button"
+          class="border rounded p-1"
+          [class.border-primary]="i === selectedImageIndex"
+          (click)="selectImage(i)"
+          style="width: 60px; height: 60px; overflow: hidden; background: transparent;"
+        >
           <img
-            [src]="selectedImage || '/imagenes/product-not-available.jpg'"
-            [alt]="product!.name"
-            class="main-image"
-            (click)="toggleZoom()"
-            [style.cursor]="isZoomed ? 'zoom-out' : 'zoom-in'"
+            [src]="image"
+            class="d-block w-100"
+            [alt]="'Thumbnail ' + (i + 1)"
+            style="object-fit: cover; height: 100%;"
           />
-        </div>
-
-        <!-- Thumbnail Images -->
-        <div class="thumbnails mt-3" *ngIf="product!.imageUrl.length > 1">
-          <div class="thumbnail-row">
+        </button>
+      </div>
+    </div>
+    <div class="col-md-5">
+      <div id="productCarousel" class="carousel slide" data-bs-ride="carousel" (slid)="onCarouselSlide($event)">
+        <div class="carousel-inner">
+          <div
+            *ngFor="let image of product.imageUrl; let i = index"
+            class="carousel-item"
+            [class.active]="i === selectedImageIndex"
+          >
             <img
-              *ngFor="let image of product!.imageUrl; let i = index"
               [src]="image"
-              [alt]="'Imagen ' + (i + 1)"
-              class="thumbnail"
-              [class.active]="i === selectedImageIndex"
-              (click)="selectImage(i)"
+              class="d-block w-100"
+              [alt]="product.name + ' image ' + (i + 1)"
+              (click)="openModal(i)"
+              style="cursor: zoom-in; object-fit: contain; max-height: 400px;"
             />
           </div>
         </div>
+        <button
+          class="carousel-control-prev"
+          type="button"
+          data-bs-target="#productCarousel"
+          data-bs-slide="prev"
+          (click)="selectImage((selectedImageIndex - 1 + product.imageUrl.length) % product.imageUrl.length)"
+        >
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button
+          class="carousel-control-next"
+          type="button"
+          data-bs-target="#productCarousel"
+          data-bs-slide="next"
+          (click)="selectImage((selectedImageIndex + 1) % product.imageUrl.length)"
+        >
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
       </div>
     </div>
 
-    <!-- Product Information Section -->
-    <div class="col-md-6">
-      <div class="product-info">
-        <h1 class="product-title">{{ product!.name }}</h1>
+    <div class="col-md-6 d-flex flex-column justify-content-center">
+      <h1 class="display-5 fw-bold">{{ product.name }}</h1>
+      <p class="text-muted mb-2"><strong>Marca:</strong> {{ product.brand.name }}</p>
+      <p class="text-muted mb-2"><strong>Modelo:</strong> {{ product.model }}</p>
+      <p class="text-muted mb-2"><strong>Categorías:</strong> {{ product.category.join(', ') }}</p>
+      <p class="text-muted mb-2"><strong>Código:</strong> {{ product.code }}</p>
+      <p class="text-muted mb-2">
+        <strong>Disponible:</strong>
+        <span [class.text-danger]="product.quantity <= 0">{{ product.quantity }} unidades</span>
+      </p>
 
-        <div class="product-details mb-4">
-          <div class="detail-row">
-            <strong>Marca:</strong> {{ product!.brand.name }}
-          </div>
-          <div class="detail-row">
-            <strong>Modelo:</strong> {{ product!.model }}
-          </div>
-          <div class="detail-row">
-            <strong>Categorías:</strong> {{ product!.category.join(', ') }}
-          </div>
-          <div class="detail-row">
-            <strong>Código:</strong> {{ product!.code }}
-          </div>
-          <div class="detail-row">
-            <strong>Disponible:</strong> {{ product!.quantity }} unidades
-          </div>
-        </div>
+      <h2 class="text-success my-4">Q {{ product.price | number: '1.2-2' }}</h2>
 
-        <div class="product-price mb-4">
-          <h2 class="price">Q {{ product!.price | number: '1.2-2' }}</h2>
-        </div>
+      <div class="mb-4">
+        <h4>Descripción</h4>
+        <p>{{ product.description }}</p>
+      </div>
 
-        <div class="product-description mb-4">
-          <h4>Descripción</h4>
-          <p>{{ product!.description }}</p>
-        </div>
+      <div class="d-flex gap-3">
+        <button
+          class="btn btn-primary btn-lg d-flex align-items-center"
+          (click)="addToCart()"
+          [disabled]="product.quantity <= 0"
+        >
+          <i class="fas fa-cart-plus me-2"></i> Agregar al Carrito
+        </button>
+        <button class="btn btn-outline-secondary btn-lg d-flex align-items-center">
+          <i class="fas fa-heart me-2"></i> Favoritos
+        </button>
+      </div>
 
-        <div class="action-buttons">
-          <button
-            class="btn btn-primary btn-lg me-3"
-            (click)="addToCart()"
-            [disabled]="product!.quantity <= 0"
-          >
-            <i class="fas fa-cart-plus"></i> Agregar al Carrito
-          </button>
-          <button class="btn btn-outline-secondary btn-lg">
-            <i class="fas fa-heart"></i> Favoritos
-          </button>
-        </div>
-
-        <div class="mt-3" *ngIf="product!.quantity <= 0">
-          <span class="text-danger">Producto agotado</span>
-        </div>
+      <div *ngIf="product.quantity <= 0" class="mt-3">
+        <span class="text-danger fw-bold">Producto agotado</span>
       </div>
     </div>
   </div>
 </div>
 
-<div class="container mt-4" *ngIf="!product">
-  <div class="alert alert-info">
+<div class="container mt-5" *ngIf="!product">
+  <div class="alert alert-info text-center">
     <h4>Cargando producto...</h4>
+  </div>
+</div>
+
+<!-- Modal para imagen ampliada -->
+<div class="modal fade" tabindex="-1" [ngClass]="{'show d-block': showModal}" [style.backgroundColor]="'rgba(0,0,0,0.8)'" (click)="closeModal()" *ngIf="product">
+  <div class="modal-dialog modal-dialog-centered modal-lg" (click)="$event.stopPropagation()">
+    <div class="modal-content bg-transparent border-0">
+      <div class="carousel-indicators">
+        <button
+          *ngFor="let image of product.imageUrl; let i = index"
+          type="button"
+          [attr.data-bs-target]="'#carouselExampleCaptions'"
+          [attr.data-bs-slide-to]="i"
+          [class.active]="i === modalImageIndex"
+          aria-current="true"
+          [attr.aria-label]="'Slide ' + (i + 1)"
+        ></button>
+      </div>
+      <div class="modal-body p-0 position-relative">
+        <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3" aria-label="Close" (click)="closeModal()"></button>
+        <img [src]="modalImage" class="img-fluid" style="max-width: 100%;" alt="Imagen ampliada" />
+
+        <button class="carousel-control-prev position-absolute start-0" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev" (click)="prevModalImage()">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next position-absolute end-0" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="next" (click)="nextModalImage()">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Siguiente</span>
+        </button>
+      </div>
+    </div>
   </div>
 </div>
