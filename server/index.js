@@ -34,17 +34,25 @@ const readData = (dbPath) => {
   }
 };
 
-const writeData = (dbPath, data) => {
+const writeData = (dbPath, data, productId = null) => {
   try {
     const jsonString = JSON.stringify(data, null, 2);
     fs.writeFileSync(dbPath, jsonString, 'utf8');
     console.log(`[SUCCESS] Wrote ${data.length} items to ${path.basename(dbPath)}`);
-    logToFile(`Éxito: Escribió ${data.length} items a ${path.basename(dbPath)}`);
+    let logMessage = `Éxito: Escribió ${data.length} items a ${path.basename(dbPath)}`;
+    if (productId) {
+      logMessage += ` (ID Producto: ${productId})`;
+    }
+    logToFile(logMessage);
   } catch (error) {
     console.error(`[ERROR] Failed to write to ${dbPath}:`, error.message);
     console.error('Data length:', data.length);
     console.error('Sample data:', JSON.stringify(data.slice(0, 2), null, 2));
-    logToFile(`Error al escribir a ${path.basename(dbPath)}: ${error.message}`, true);
+    let errorMessage = `Error al escribir a ${path.basename(dbPath)}: ${error.message}`;
+    if (productId) {
+      errorMessage += ` (ID Producto: ${productId})`;
+    }
+    logToFile(errorMessage, true);
   }
 };
 
@@ -75,7 +83,7 @@ const recordInventoryMovement = (productId, type, quantity, userId, notes = '', 
     notes
   };
   movements.push(newMovement);
-  writeData(inventoryMovementsDbPath, movements);
+  writeData(inventoryMovementsDbPath, movements, productId);
 };
 
 
@@ -228,7 +236,7 @@ app.post('/api/products', (req, res) => {
     ...req.body
   };
   products.push(newProduct);
-  writeData(productsDbPath, products);
+  writeData(productsDbPath, products, newProduct.id);
 
   // Record initial inventory entry
   if (newProduct.quantity > 0 && newProduct.ownerId) {
@@ -257,7 +265,7 @@ app.put('/api/products/:id', (req, res) => {
   const newQuantity = updatedProduct.quantity;
 
   products[index] = { ...products[index], ...updatedProduct, id: productId }; // Ensure ID is not changed
-  writeData(productsDbPath, products);
+  writeData(productsDbPath, products, productId);
 
   // Record inventory movement if quantity changed
   if (newQuantity !== oldQuantity && updatedProduct.ownerId) {
@@ -287,7 +295,7 @@ app.delete('/api/products/:id', (req, res) => {
     return res.status(404).json({ message: 'Producto no encontrado' });
   }
 
-  writeData(productsDbPath, products);
+  writeData(productsDbPath, products, productId);
   res.status(204).send(); // No content for successful deletion
   console.log('DELETE /api/products/:id successful.');
 });
@@ -371,7 +379,7 @@ app.post('/api/inventory-movements', (req, res) => {
     notes: req.body.notes || ''
   };
   movements.push(newMovement);
-  writeData(inventoryMovementsDbPath, movements);
+  writeData(inventoryMovementsDbPath, movements, productId);
 
   // Update product quantity in products.json
   const products = readData(productsDbPath);
@@ -388,7 +396,7 @@ app.post('/api/inventory-movements', (req, res) => {
     products[productIndex].quantity -= quantity;
   }
   console.log(`[DEBUG POST] New quantity: ${products[productIndex].quantity}`);
-  writeData(productsDbPath, products);
+  writeData(productsDbPath, products, productId);
 
   res.status(201).json(newMovement);
   console.log('POST /api/inventory-movements successful.');
@@ -455,14 +463,14 @@ app.put('/api/inventory-movements/:id', (req, res) => {
     notes: notes || '',
     date: new Date().toISOString() // Update date on edit
   };
-  writeData(inventoryMovementsDbPath, movements);
+  writeData(inventoryMovementsDbPath, movements, productId);
 
   // Adjust product quantity
   const products = readData(productsDbPath);
   const productIndex = products.findIndex(p => p.id === productId);
   if (productIndex !== -1) {
     products[productIndex].quantity += delta;
-    writeData(productsDbPath, products);
+    writeData(productsDbPath, products, productId);
     logProductQuantity(productId, 'PUT AFTER');
   } else {
     console.error('Product not found for adjustment:', productId);
@@ -515,14 +523,14 @@ app.put('/api/inventory-movements/:id', (req, res) => {
     notes: notes || '',
     date: new Date().toISOString() // Update date on edit
   };
-  writeData(inventoryMovementsDbPath, movements);
+  writeData(inventoryMovementsDbPath, movements, oldMovement.productId);
 
   // Adjust product quantity
   const products = readData(productsDbPath);
   const productIndex = products.findIndex(p => p.id === oldMovement.productId);
   if (productIndex !== -1) {
     products[productIndex].quantity += delta;
-    writeData(productsDbPath, products);
+    writeData(productsDbPath, products, oldMovement.productId);
   }
 
   res.json(movements[movementIndex]);
@@ -573,13 +581,21 @@ const readBrands = () => {
   }
 };
 
-const writeBrands = (data) => {
+const writeBrands = (data, brandId = null) => {
   try {
     fs.writeFileSync(brandDbPath, JSON.stringify(data, null, 2));
-    logToFile(`Éxito: Escribió ${data.length} marcas a brands.json`);
+    let logMessage = `Éxito: Escribió ${data.length} marcas a brands.json`;
+    if (brandId) {
+      logMessage += ` (ID Marca: ${brandId})`;
+    }
+    logToFile(logMessage);
   } catch (error) {
     console.error('Error writing brands:', error);
-    logToFile(`Error al escribir marcas a brands.json: ${error.message}`, true);
+    let errorMessage = `Error al escribir marcas a brands.json: ${error.message}`;
+    if (brandId) {
+      errorMessage += ` (ID Marca: ${brandId})`;
+    }
+    logToFile(errorMessage, true);
   }
 };
 
@@ -596,13 +612,21 @@ const readCategories = () => {
   }
 };
 
-const writeCategories = (data) => {
+const writeCategories = (data, categoryId = null) => {
   try {
     fs.writeFileSync(categoryDbPath, JSON.stringify(data, null, 2));
-    logToFile(`Éxito: Escribió ${data.length} categorías a categories.json`);
+    let logMessage = `Éxito: Escribió ${data.length} categorías a categories.json`;
+    if (categoryId) {
+      logMessage += ` (ID Categoría: ${categoryId})`;
+    }
+    logToFile(logMessage);
   } catch (error) {
     console.error('Error writing categories:', error);
-    logToFile(`Error al escribir categorías a categories.json: ${error.message}`, true);
+    let errorMessage = `Error al escribir categorías a categories.json: ${error.message}`;
+    if (categoryId) {
+      errorMessage += ` (ID Categoría: ${categoryId})`;
+    }
+    logToFile(errorMessage, true);
   }
 };
 
@@ -635,7 +659,7 @@ app.post('/api/brands', (req, res) => {
     imagen: req.body.imagen || ''
   };
   brands.push(newBrand);
-  writeBrands(brands);
+  writeBrands(brands, newBrand.id);
   res.status(201).json(newBrand);
 });
 
@@ -650,7 +674,7 @@ app.put('/api/brands/:id', (req, res) => {
   if (req.body.imagen) {
     brands[index].imagen = req.body.imagen;
   }
-  writeBrands(brands);
+  writeBrands(brands, brandId);
   res.json(brands[index]);
 });
 
@@ -662,7 +686,7 @@ app.delete('/api/brands/:id', (req, res) => {
   if (brands.length === initialLength) {
     return res.status(404).json({ message: 'Marca no encontrada' });
   }
-  writeBrands(brands);
+  writeBrands(brands, brandId);
   res.status(204).send();
 });
 
@@ -679,7 +703,7 @@ app.post('/api/categories', (req, res) => {
     name: req.body.name
   };
   categories.push(newCategory);
-  writeCategories(categories);
+  writeCategories(categories, newCategory.id);
   res.status(201).json(newCategory);
 });
 
@@ -691,7 +715,7 @@ app.put('/api/categories/:id', (req, res) => {
     return res.status(404).json({ message: 'Categoría no encontrada' });
   }
   categories[index].name = req.body.name;
-  writeCategories(categories);
+  writeCategories(categories, categoryId);
   res.json(categories[index]);
 });
 
@@ -703,7 +727,7 @@ app.delete('/api/categories/:id', (req, res) => {
   if (categories.length === initialLength) {
     return res.status(404).json({ message: 'Categoría no encontrada' });
   }
-  writeCategories(categories);
+  writeCategories(categories, categoryId);
   res.status(204).send();
 });
 
