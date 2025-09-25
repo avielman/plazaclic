@@ -3,12 +3,17 @@
     "id": 1,
     "email": "avielman@gmail.com",
     "password": "Linux123@",
-    "userType": "cliente"
+    "userType": "cliente",
+    "favorites": []
   },
   {
     "id": 2,
     "email": "hvielman@outlook.com",
     "password": "Linux123@",
-    "userType": "proveedor"
+    "userType": "proveedor",
+    "favorites": [
+      6,
+      7
+    ]
   }
 ]

@@ -147,6 +147,47 @@ app.post('/api/auth/login', (req, res) => {
   });
 });
 
+// --- USER FAVORITES ROUTES ---
+app.get('/api/users/:id/favorites', (req, res) => {
+  const users = readData(usersDbPath);
+  const userId = parseInt(req.params.id, 10);
+
+  if (isNaN(userId)) {
+    return res.status(400).json({ message: 'El ID de usuario debe ser un número' });
+  }
+
+  const user = users.find(u => u.id === userId);
+  if (!user) {
+    return res.status(404).json({ message: 'Usuario no encontrado' });
+  }
+
+  res.json(user.favorites || []);
+});
+
+app.put('/api/users/:id/favorites', (req, res) => {
+  const users = readData(usersDbPath);
+  const userId = parseInt(req.params.id, 10);
+  const { favorites } = req.body;
+
+  if (isNaN(userId)) {
+    return res.status(400).json({ message: 'El ID de usuario debe ser un número' });
+  }
+
+  if (!Array.isArray(favorites)) {
+    return res.status(400).json({ message: 'Favoritos debe ser un array' });
+  }
+
+  const userIndex = users.findIndex(u => u.id === userId);
+  if (userIndex === -1) {
+    return res.status(404).json({ message: 'Usuario no encontrado' });
+  }
+
+  users[userIndex].favorites = favorites;
+  writeData(usersDbPath, users);
+
+  res.json({ message: 'Favoritos actualizados', favorites });
+});
+
 // --- PRODUCT ROUTES ---
 app.get('/api/products', (req, res) => {
     let products = readData(productsDbPath);

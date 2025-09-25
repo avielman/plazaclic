@@ -1,41 +1,41 @@
-<nav style="background-color: black; padding: 10px;">
-  <div style="display: flex; justify-content: space-between; align-items: center;">
-    <div style="display: flex; align-items: center;">
-      <a style="color: white; text-decoration: none; font-weight: bold; margin-right: 20px;" routerLink="/">PlazaClic</a>
-      <ul style="list-style: none; display: flex; margin: 0; padding: 0;">
-        <li style="margin-right: 20px;">
-          <a style="color: white; text-decoration: none;" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Inicio</a>
+<nav class="header-nav">
+  <div class="header-container">
+    <div class="header-left">
+      <a class="header-logo" routerLink="/">PlazaClic</a>
+      <ul class="header-menu">
+        <li class="header-menu-item">
+          <a class="header-link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Inicio</a>
         </li>
-        <li style="margin-right: 20px;">
-          <a style="color: white; text-decoration: none;" routerLink="/products" routerLinkActive="active">Productos</a>
+        <li class="header-menu-item">
+          <a class="header-link" routerLink="/products" routerLinkActive="active">Productos</a>
         </li>
-        <li style="margin-right: 20px;">
-          <a style="color: white; text-decoration: none;" routerLink="/favorites" routerLinkActive="active">
+        <li class="header-menu-item">
+          <a class="header-link" routerLink="/favorites" routerLinkActive="active">
             <i class="fas fa-heart me-1"></i>Favoritos
           </a>
         </li>
       </ul>
     </div>
-    <ul style="list-style: none; display: flex; margin: 0; padding: 0;">
-      <li style="margin-right: 20px;">
-        <a style="color: white; text-decoration: none;" routerLink="/cart" routerLinkActive="active">
+    <ul class="header-menu">
+      <li class="header-menu-item">
+        <a class="header-link" routerLink="/cart" routerLinkActive="active">
           Carrito ({{ cartItemCount$ | async }})
         </a>
       </li>
       <ng-container *ngIf="!(isLoggedIn$ | async)">
-        <li style="margin-right: 20px;">
-          <a style="color: white; text-decoration: none;" routerLink="/login" routerLinkActive="active">Login</a>
+        <li class="header-menu-item">
+          <a class="header-link" routerLink="/login" routerLinkActive="active">Login</a>
         </li>
-        <li style="margin-right: 20px;">
-          <a style="color: white; text-decoration: none;" routerLink="/register" routerLinkActive="active">Registro</a>
+        <li class="header-menu-item">
+          <a class="header-link" routerLink="/register" routerLinkActive="active">Registro</a>
         </li>
       </ng-container>
       <ng-container *ngIf="isLoggedIn$ | async">
-        <li style="margin-right: 20px;">
-          <a style="color: white; text-decoration: none;" routerLink="/admin" routerLinkActive="active">Admin</a>
+        <li class="header-menu-item">
+          <a class="header-link" routerLink="/admin" routerLinkActive="active">Admin</a>
         </li>
-        <li>
-          <a style="color: white; text-decoration: none; cursor: pointer;" (click)="logout()">Logout</a>
+        <li class="header-menu-item">
+          <a class="header-link" (click)="logout()">Logout</a>
         </li>
       </ng-container>
     </ul>

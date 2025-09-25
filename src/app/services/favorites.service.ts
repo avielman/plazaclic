@@ -1,32 +1,23 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, forkJoin, of } from 'rxjs';
+import { map, switchMap, tap } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
 import { Product } from '../models/product.model';
-
-interface FavoriteProduct {
-  id: number;
-  name: string;
-  price: number;
-  imageUrl: string[];
-  brand: {
-    id: number;
-    name: string;
-  };
-  model: string;
-  code: string;
-  category: string[];
-  quantity: number;
-  description: string;
-}
+import { AuthService } from './auth';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FavoritesService {
+  private apiUrl = 'http://localhost:3000/api';
   private favoriteIds: number[] = [];
   private favoritesSubject = new BehaviorSubject<Product[]>([]);
 
-  constructor() {
-    this.loadFavoritesFromStorage();
+  constructor(
+    private http: HttpClient,
+    private authService: AuthService
+  ) {
+    this.loadFavorites();
   }
 
   getFavorites(): Observable<Product[]> {
@@ -34,16 +25,22 @@ export class FavoritesService {
   }
 
   addToFavorites(product: Product): void {
+    const user = this.authService.getUser();
+    if (!user) return;
+
     if (!this.isFavorite(product.id)) {
       this.favoriteIds.push(product.id);
-      this.saveFavoritesToStorage();
+      this.saveFavorites();
       this.favoritesSubject.next([...this.favoritesSubject.value, product]);
     }
   }
 
   removeFromFavorites(productId: number): void {
+    const user = this.authService.getUser();
+    if (!user) return;
+
     this.favoriteIds = this.favoriteIds.filter(id => id !== productId);
-    this.saveFavoritesToStorage();
+    this.saveFavorites();
     const currentFavorites = this.favoritesSubject.value.filter(p => p.id !== productId);
     this.favoritesSubject.next(currentFavorites);
   }
@@ -66,48 +63,57 @@ export class FavoritesService {
     return this.favoriteIds.length;
   }
 
-  private saveFavoritesToStorage(): void {
-    try {
-      localStorage.setItem('favorites', JSON.stringify(this.favoriteIds));
-    } catch (error) {
-      if (error instanceof DOMException && error.name === 'QuotaExceededError') {
-        console.warn('localStorage quota exceeded. Clearing old favorites data.');
-        this.handleStorageQuotaExceeded();
-      } else {
-        console.error('Error saving favorites to localStorage:', error);
-      }
-    }
-  }
-
-  private handleStorageQuotaExceeded(): void {
-    try {
-      // Clear all localStorage and try again with just current favorites
-      localStorage.clear();
-      localStorage.setItem('favorites', JSON.stringify(this.favoriteIds));
-    } catch (error) {
-      // If still failing, keep only the last 10 favorites
-      const limitedFavorites = this.favoriteIds.slice(-10);
-      localStorage.setItem('favorites', JSON.stringify(limitedFavorites));
-      this.favoriteIds = limitedFavorites;
-      console.warn('localStorage quota still exceeded. Keeping only last 10 favorites.');
-    }
-  }
-
-  private loadFavoritesFromStorage(): void {
-    try {
-      const stored = localStorage.getItem('favorites');
-      if (stored) {
-        this.favoriteIds = JSON.parse(stored);
-      }
-    } catch (error) {
-      console.error('Error loading favorites from localStorage:', error);
+  private loadFavorites(): void {
+    const user = this.authService.getUser();
+    if (!user) {
       this.favoriteIds = [];
+      this.favoritesSubject.next([]);
+      return;
     }
+
+    this.http.get<number[]>(`${this.apiUrl}/users/${user.id}/favorites`).pipe(
+      switchMap(ids => {
+        this.favoriteIds = ids || [];
+        if (this.favoriteIds.length === 0) {
+          return of([]);
+        }
+        const productRequests = this.favoriteIds.map(id =>
+          this.http.get<Product>(`${this.apiUrl}/products/${id}`)
+        );
+        return forkJoin(productRequests);
+      })
+    ).subscribe({
+      next: (products) => {
+        this.favoritesSubject.next(products);
+      },
+      error: (error) => {
+        console.error('Error loading favorites:', error);
+        this.favoriteIds = [];
+        this.favoritesSubject.next([]);
+      }
+    });
+  }
+
+  private saveFavorites(): void {
+    const user = this.authService.getUser();
+    if (!user) return;
+
+    this.http.put(`${this.apiUrl}/users/${user.id}/favorites`, { favorites: this.favoriteIds }).subscribe({
+      next: () => {
+        // Successfully saved
+      },
+      error: (error) => {
+        console.error('Error saving favorites:', error);
+      }
+    });
   }
 
   clearFavorites(): void {
+    const user = this.authService.getUser();
+    if (!user) return;
+
     this.favoriteIds = [];
-    this.saveFavoritesToStorage();
+    this.saveFavorites();
     this.favoritesSubject.next([]);
   }
 }
