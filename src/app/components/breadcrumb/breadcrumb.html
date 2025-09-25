@@ -1,0 +1,22 @@
+<nav aria-label="breadcrumb" class="breadcrumb-container" *ngIf="breadcrumbs.length > 0; else fallbackBreadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item" *ngFor="let crumb of breadcrumbs; let last = last">
+      <ng-container *ngIf="!last && crumb.link; else noLink">
+        <a [routerLink]="crumb.link">{{ crumb.label }}</a>
+      </ng-container>
+      <ng-template #noLink>
+        <span class="breadcrumb-current">{{ crumb.label }}</span>
+      </ng-template>
+    </li>
+  </ol>
+</nav>
+
+<ng-template #fallbackBreadcrumb>
+  <nav aria-label="breadcrumb" class="breadcrumb-container">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <span class="breadcrumb-current">Inicio</span>
+      </li>
+    </ol>
+  </nav>
+</ng-template>

@@ -6,6 +6,7 @@ import { switchMap, startWith, take, map } from 'rxjs/operators';
 import { Product } from '../../models/product.model';
 import { ProductService } from '../../services/product';
 import { CartService } from '../../services/cart';
+import { FavoritesService } from '../../services/favorites.service';
 import { FormBuilder, FormGroup, ReactiveFormsModule, FormArray, FormControl } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
@@ -26,6 +27,7 @@ export class ProductListComponent implements OnInit {
     private productService: ProductService,
     private route: ActivatedRoute,
     private cartService: CartService,
+    private favoritesService: FavoritesService,
     private fb: FormBuilder
   ) {
     this.filterForm = this.fb.group({
@@ -154,5 +156,18 @@ export class ProductListComponent implements OnInit {
   addToCart(product: Product): void {
     this.cartService.addItem(product);
     alert('Producto añadido al carrito!');
+  }
+
+  toggleFavorite(product: Product): void {
+    const isFavorite = this.favoritesService.toggleFavorite(product);
+    if (isFavorite) {
+      alert('Producto agregado a favoritos');
+    } else {
+      alert('Producto eliminado de favoritos');
+    }
+  }
+
+  isFavorite(productId: number): boolean {
+    return this.favoritesService.isFavorite(productId);
   }
 }

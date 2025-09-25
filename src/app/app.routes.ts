@@ -17,28 +17,43 @@ import { authGuard } from './services/auth-guard';
 import { ProductFormComponent } from './components/product-form/product-form';
 
 import { ProductDetail } from './components/product-detail/product-detail';
+import { FavoritesComponent } from './components/favorites/favorites';
 
 export const routes: Routes = [
-    { path: '', component: HomeComponent },
-    { path: 'products', component: ProductListComponent },
-    { path: 'products/:id', component: ProductDetail }, // New route
-    { path: 'login', component: LoginComponent },
-    { path: 'register', component: RegisterComponent },
+    { path: '', component: HomeComponent, data: { breadcrumb: 'Inicio' } },
+    {
+        path: 'products',
+        data: { breadcrumb: 'Productos' },
+        children: [
+            { path: '', component: ProductListComponent, pathMatch: 'full' },
+            { path: ':id', component: ProductDetail, data: { breadcrumb: 'Detalle del Producto' } }
+        ]
+    },
+    { path: 'favorites', component: FavoritesComponent, data: { breadcrumb: 'Favoritos' } },
+    { path: 'login', component: LoginComponent, data: { breadcrumb: 'Iniciar Sesión' } },
+    { path: 'register', component: RegisterComponent, data: { breadcrumb: 'Registro' } },
     {
         path: 'admin',
         component: AdminDashboardComponent,
         canActivate: [authGuard],
+        data: { breadcrumb: 'Administración' },
         children: [
             { path: '', redirectTo: 'products', pathMatch: 'full' },
-            { path: 'products', component: ProductAdminListComponent },
-            { path: 'add-product', component: ProductFormComponent },
-            { path: 'edit-product/:id', component: ProductFormComponent },
-            { path: 'inventory/:productId', component: InventoryComponent },
-            { path: 'company', component: CompanyManagement },
-            { path: 'categories', component: CategoryManagement },
-            { path: 'brands', component: BrandManagement },
+            {
+                path: 'products',
+                data: { breadcrumb: 'Productos' },
+                children: [
+                    { path: '', component: ProductAdminListComponent, pathMatch: 'full' },
+                    { path: 'add', component: ProductFormComponent, data: { breadcrumb: 'Agregar Producto' } },
+                    { path: 'edit/:id', component: ProductFormComponent, data: { breadcrumb: 'Editar Producto' } }
+                ]
+            },
+            { path: 'inventory/:productId', component: InventoryComponent, data: { breadcrumb: 'Inventario' } },
+            { path: 'company', component: CompanyManagement, data: { breadcrumb: 'Empresa' } },
+            { path: 'categories', component: CategoryManagement, data: { breadcrumb: 'Categorías' } },
+            { path: 'brands', component: BrandManagement, data: { breadcrumb: 'Marcas' } },
         ]
     },
-    { path: 'cart', component: CartComponent },
-    { path: 'checkout', component: CheckoutComponent },
+    { path: 'cart', component: CartComponent, data: { breadcrumb: 'Carrito' } },
+    { path: 'checkout', component: CheckoutComponent, data: { breadcrumb: 'Checkout' } },
 ];

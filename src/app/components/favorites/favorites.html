@@ -1,0 +1,54 @@
+<div class="favorites-container" *ngIf="favorites.length > 0; else emptyFavorites">
+  <div class="favorites-header">
+    <h2 class="favorites-title">
+      <i class="fas fa-heart me-2"></i>
+      Mis Favoritos ({{ favorites.length }})
+    </h2>
+    <button class="btn btn-outline-danger clear-btn" (click)="clearFavorites()">
+      <i class="fas fa-trash me-2"></i>
+      Limpiar Todo
+    </button>
+  </div>
+
+  <div class="favorites-grid">
+    <div class="favorite-card" *ngFor="let product of favorites; trackBy: trackByProductId">
+      <div class="favorite-image">
+        <img [src]="product.imageUrl[0]" [alt]="product.name" class="product-image">
+        <button class="remove-favorite-btn" (click)="removeFromFavorites(product.id)">
+          <i class="fas fa-heart-broken"></i>
+        </button>
+      </div>
+
+      <div class="favorite-info">
+        <h5 class="product-name">{{ product.name }}</h5>
+        <p class="product-brand">{{ product.brand.name }}</p>
+        <p class="product-price">Q {{ product.price | number: '1.2-2' }}</p>
+
+        <div class="favorite-actions">
+          <button class="btn btn-primary btn-sm" (click)="viewProduct(product.id)">
+            <i class="fas fa-eye me-1"></i>
+            Ver Detalle
+          </button>
+          <button class="btn btn-success btn-sm" (click)="addToCart(product)">
+            <i class="fas fa-cart-plus me-1"></i>
+            Al Carrito
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #emptyFavorites>
+  <div class="empty-favorites">
+    <div class="empty-icon">
+      <i class="fas fa-heart"></i>
+    </div>
+    <h3 class="empty-title">No tienes productos favoritos</h3>
+    <p class="empty-message">Agrega productos a tus favoritos para verlos aquí</p>
+    <button class="btn btn-primary" (click)="goToProducts()">
+      <i class="fas fa-shopping-bag me-2"></i>
+      Explorar Productos
+    </button>
+  </div>
+</ng-template>

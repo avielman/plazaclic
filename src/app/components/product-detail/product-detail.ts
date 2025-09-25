@@ -1,9 +1,12 @@
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgIf } from '@angular/common';
 import { ProductService } from '../../services/product';
 import { CartService } from '../../services/cart';
+import { FavoritesService } from '../../services/favorites.service';
 import { Product } from '../../models/product.model';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-product-detail',
@@ -23,7 +26,8 @@ export class ProductDetail implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private productService: ProductService,
-    private cartService: CartService
+    private cartService: CartService,
+    private favoritesService: FavoritesService
   ) {}
 
   ngOnInit(): void {
@@ -90,6 +94,25 @@ export class ProductDetail implements OnInit {
       // Optional: Show success message or navigate to cart
       alert('Producto agregado al carrito');
     }
+  }
+
+  goBack(): void {
+    this.router.navigate(['/products']);
+  }
+
+  toggleFavorite(): void {
+    if (this.product) {
+      const isFavorite = this.favoritesService.toggleFavorite(this.product);
+      if (isFavorite) {
+        alert('Producto agregado a favoritos');
+      } else {
+        alert('Producto eliminado de favoritos');
+      }
+    }
+  }
+
+  isFavorite(): boolean {
+    return this.product ? this.favoritesService.isFavorite(this.product.id) : false;
   }
 
   get selectedImage(): string {

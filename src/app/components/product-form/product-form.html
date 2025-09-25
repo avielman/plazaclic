@@ -56,9 +56,12 @@
     <div class="mb-3">
       <label class="form-label">Imágenes del Producto</label>
       <div formArrayName="imageUrls">
-        <div *ngFor="let imageUrlControl of imageUrls.controls; let i = index" class="input-group mb-2">
-          <input type="file" class="form-control" (change)="onFileSelected($event, i)" accept="image/*">
-          <button type="button" class="btn btn-outline-danger" (click)="removeImageUrl(i)">Eliminar</button>
+        <div *ngFor="let imageUrlControl of imageUrls.controls; let i = index" class="mb-3 border p-2 rounded">
+          <div class="d-flex align-items-center mb-2">
+            <img *ngIf="imageUrlControl.value" [src]="imageUrlControl.value" alt="Imagen del producto" class="img-thumbnail me-3" style="max-width: 100px; max-height: 100px;">
+            <input type="file" class="form-control" (change)="onFileSelected($event, i)" accept="image/*">
+            <button type="button" class="btn btn-outline-danger ms-2" (click)="removeImageUrl(i)">Eliminar</button>
+          </div>
         </div>
       </div>
       <button type="button" class="btn btn-outline-primary" (click)="addFileInput()">Añadir Imagen</button>

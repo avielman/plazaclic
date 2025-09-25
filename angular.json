@@ -61,7 +61,7 @@
           "builder": "@angular/build:dev-server",
           "options": {
             "headers": {
-              "Content-Security-Policy": "default-src 'self'; img-src 'self' data: https:; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https:; font-src 'self' https:; connect-src 'self' http://localhost:3000 ws://localhost:3000;"
+              "Content-Security-Policy": "default-src 'self'; img-src 'self' data: https:; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https:; font-src 'self' https:; connect-src 'self' http://localhost:3000 ws://localhost:3000; worker-src 'self' blob:;"
             }
           },
           "configurations": {
