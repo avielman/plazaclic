@@ -1,14 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { BrandService } from '../../services/brand';
 import { Brand } from '../../models/brand.model';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-brand-management',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule],
   templateUrl: './brand-management.html',
   styleUrls: ['./brand-management.css']
 })
@@ -33,8 +35,18 @@ export class BrandManagement implements OnInit {
     this.loadBrands();
   }
 
+  sortBy: 'id' | 'name' = 'id';
+
   loadBrands(): void {
-    this.brands$ = this.brandService.getBrands();
+    this.brands$ = this.brandService.getBrands().pipe(
+      map(brands => {
+        if (this.sortBy === 'name') {
+          return brands.sort((a, b) => a.name.localeCompare(b.name));
+        } else {
+          return brands.sort((a, b) => a.id - b.id);
+        }
+      })
+    );
   }
 
   onFileSelected(event: Event): void {

@@ -44,7 +44,7 @@ export class ProductListComponent implements OnInit {
   ngOnInit(): void {
     // Fetch all products initially to get unique brands and categories for filters
     this.productService.getProducts().subscribe(products => {
-      this.allBrands = [...new Set(products.map(p => p.brand.name))];
+      this.allBrands = [...new Set(products.map(p => p.brand.name))].sort();
       // Flatten categories array before creating a Set of unique categories
       this.allCategories = [...new Set(products.flatMap(p => p.category))].sort();
 

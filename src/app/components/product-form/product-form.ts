@@ -62,7 +62,7 @@ export class ProductFormComponent implements OnInit {
       brands: this.brandService.getBrands(),
       categories: this.categoryService.getCategories()
     }).subscribe(({ brands, categories }) => {
-      this.allBrands = brands.map(b => b.name);
+      this.allBrands = brands.map(b => b.name).sort();
       this.allCategories = categories.map(c => c.name).sort();
 
       // Generate code for new products
