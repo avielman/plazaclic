@@ -20,7 +20,13 @@
 
 <div class="card">
   <div class="card-body">
-    <h5 class="card-title fs-5">Categorías Existentes</h5>
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <h5 class="card-title fs-5 mb-0">Categorías Existentes</h5>
+      <select class="form-select form-select-sm w-auto" [(ngModel)]="sortBy" (change)="loadCategories()">
+        <option value="id">Ordenar por ID</option>
+        <option value="name">Ordenar alfabéticamente</option>
+      </select>
+    </div>
     <table class="table table-striped">
       <thead>
         <tr>

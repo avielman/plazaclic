@@ -1,14 +1,17 @@
+
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { CategoryService } from '../../services/category';
 import { Category } from '../../models/category.model';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-category-management',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule],
   templateUrl: './category-management.html',
   styleUrls: ['./category-management.css']
 })
@@ -17,6 +20,7 @@ export class CategoryManagement implements OnInit {
   categoryForm: FormGroup;
   isEditing = false;
   currentCategoryId: number | null = null;
+  sortBy: 'id' | 'name' = 'id';
 
   constructor(
     private fb: FormBuilder,
@@ -32,7 +36,15 @@ export class CategoryManagement implements OnInit {
   }
 
   loadCategories(): void {
-    this.categories$ = this.categoryService.getCategories();
+    this.categories$ = this.categoryService.getCategories().pipe(
+      map(categories => {
+        if (this.sortBy === 'name') {
+          return categories.sort((a, b) => a.name.localeCompare(b.name));
+        } else {
+          return categories.sort((a, b) => a.id - b.id);
+        }
+      })
+    );
   }
 
   onSubmit(): void {

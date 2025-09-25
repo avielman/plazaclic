@@ -46,7 +46,7 @@ export class ProductListComponent implements OnInit {
     this.productService.getProducts().subscribe(products => {
       this.allBrands = [...new Set(products.map(p => p.brand.name))];
       // Flatten categories array before creating a Set of unique categories
-      this.allCategories = [...new Set(products.flatMap(p => p.category))];
+      this.allCategories = [...new Set(products.flatMap(p => p.category))].sort();
 
       // Initialize FormArrays based on URL query params or default to all selected
       this.route.queryParams.pipe(take(1)).subscribe((queryParams: Params) => {
