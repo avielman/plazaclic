@@ -36,6 +36,10 @@ export class ProductDetail implements OnInit {
       this.productService.getProductById(+id).subscribe({
         next: (product) => {
           this.product = product;
+          // Sort categories alphabetically
+          if (this.product.category) {
+            this.product.category = this.product.category.sort();
+          }
           // Set imageSrc for compatibility
           if (product.imageUrl && product.imageUrl.length > 0) {
             product.imageSrc = product.imageUrl[0];
