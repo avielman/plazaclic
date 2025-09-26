@@ -94,14 +94,19 @@
                 <div class="d-flex gap-2">
                   <button
                     class="btn"
+                    style="min-width: 50px; padding: 0.5rem 1rem;"
                     [class.btn-outline-danger]="isFavorite(product.id)"
                     [class.btn-outline-secondary]="!isFavorite(product.id)"
                     (click)="toggleFavorite(product)"
                     title="Agregar/Quitar de favoritos"
                   >
                     <i class="fas fa-heart"></i>
+
                   </button>
-                  <button class="btn btn-primary" (click)="addToCart(product)">Agregar al carrito</button>
+                  <button class="btn btn-primary" (click)="addToCart(product)" id="liveToastBtn">
+                    <!-- Agregar al Carrito -->
+                    <i class="fa-solid fa-cart-plus"></i>
+                  </button>
                 </div>
               </div>
             </div>
@@ -111,6 +116,21 @@
       <div *ngIf="(products$ | async)?.length === 0" class="alert alert-info mt-3">
         No se encontraron productos que coincidan con los filtros.
       </div>
+    </div>
+  </div>
+</div>
+
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+  <div id="liveToast" class="toast hide {{ toastColor }}" role="alert" aria-live="assertive" aria-atomic="true" >
+    <div class="toast-header {{ toastColor }}" >
+      <i class="fa-solid fa-square-check"></i>
+      <strong class="me-auto">{{ toastComponente }}</strong>
+      <small>{{ toastHeader }}</small>
+      <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+    <div class="toast-body {{ toastColor }}" >
+      <i class="{{ toastIcono }} mr-1"></i>
+      {{ toastMensaje }}
     </div>
   </div>
 </div>

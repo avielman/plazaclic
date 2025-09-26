@@ -9,6 +9,7 @@ import { CartService } from '../../services/cart';
 import { FavoritesService } from '../../services/favorites.service';
 import { FormBuilder, FormGroup, ReactiveFormsModule, FormArray, FormControl } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import * as bootstrap from 'bootstrap';
 
 @Component({
   selector: 'app-product-list',
@@ -22,6 +23,11 @@ export class ProductListComponent implements OnInit {
   filterForm: FormGroup;
   allBrands: string[] = [];
   allCategories: string[] = [];
+  toastHeader: string = '';
+  toastMensaje: string = '';
+  toastComponente: string = '';
+  toastIcono: string = '';
+  toastColor: string = 'bg-blue';
 
   constructor(
     private productService: ProductService,
@@ -155,15 +161,34 @@ export class ProductListComponent implements OnInit {
 
   addToCart(product: Product): void {
     this.cartService.addItem(product);
-    alert('Producto añadido al carrito!');
+    //alert('Producto añadido al carrito!');
+    //Tosty
+    this.toastbtn('Productos', 'Guardado', 'Producto añadido al carrito', 'fa-solid fa-cart-plus', 'bg-toastGreen');
+  }
+
+  toastbtn(aComponente: string, aHeader: string, aMensaje: string, aIcono: string, aColor: string) {
+    this.toastComponente = aComponente;
+    this.toastHeader = aHeader;
+    this.toastMensaje = aMensaje;
+    this.toastIcono = aIcono;
+
+    this.toastColor = aColor;
+
+    var toastElList = [].slice.call(document.querySelectorAll('.toast'))
+    var toastList = toastElList.map(function(toastEl) {
+      return new bootstrap.Toast(toastEl);
+    })
+    toastList.forEach(toast => toast.show());
   }
 
   toggleFavorite(product: Product): void {
     const isFavorite = this.favoritesService.toggleFavorite(product);
     if (isFavorite) {
-      alert('Producto agregado a favoritos');
+      this.toastbtn('Favoritos', 'Guardado', 'Producto agregado a favoritos', 'fa-solid fa-heart', 'bg-toastBlue');
+      //alert('Producto agregado a favoritos');
     } else {
-      alert('Producto eliminado de favoritos');
+      this.toastbtn('Favoritos', 'Eliminado', 'Producto eliminado de favoritos', 'fa-regular fa-heart', 'bg-toastRed');
+      //alert('Producto eliminado de favoritos');
     }
   }
 

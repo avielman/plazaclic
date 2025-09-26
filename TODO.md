@@ -1,0 +1,2 @@
+- [x] Add inline style to favorites button for min-width and padding
+- [x] Add FontAwesome CDN link to index.html for icons

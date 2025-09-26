@@ -40,19 +40,30 @@ export class BreadcrumbComponent implements OnInit {
 
   private buildBreadcrumbsFromRoute(route: ActivatedRoute): Breadcrumb[] {
     const breadcrumbs: Breadcrumb[] = [];
-    const routeSegments: ActivatedRoute[] = [];
 
-    // Collect all routes from current to root
+    // Find the deepest activated route
     let currentRoute: ActivatedRoute | null = route;
+    while (currentRoute && currentRoute.firstChild) {
+      currentRoute = currentRoute.firstChild;
+    }
+
+    // Collect route segments from deepest to root
+    const routeSegments: ActivatedRoute[] = [];
     while (currentRoute) {
       routeSegments.unshift(currentRoute);
       currentRoute = currentRoute.parent;
     }
 
-    console.log('Route segments found:', routeSegments.length);
-    console.log('Current route path:', route.snapshot.url.map(s => s.path).join('/'));
+    // Ensure root route is included if not present
+    if (routeSegments.length === 0 || routeSegments[0].snapshot.routeConfig?.path !== '') {
+      routeSegments.unshift(route);
+    }
 
-    // Build breadcrumbs from the collected segments
+    console.log('Route segments paths:', routeSegments.map(r => r.snapshot.routeConfig?.path || '(root)'));
+
+    console.log('Route segments found:', routeSegments.length);
+
+    // Build breadcrumbs from root to deepest
     let url = '';
     for (let i = 0; i < routeSegments.length; i++) {
       const routeSegment = routeSegments[i];
@@ -62,6 +73,9 @@ export class BreadcrumbComponent implements OnInit {
       if (urlSegments.length > 0) {
         const routePath = urlSegments.map(segment => segment.path).join('/');
         url += `/${routePath}`;
+      } else if (i === 0) {
+        // Root path
+        url = '/';
       }
 
       // Get breadcrumb label from route data
@@ -80,12 +94,16 @@ export class BreadcrumbComponent implements OnInit {
 
         // Only add link if it's not the last breadcrumb (current page)
         const isLast = i === routeSegments.length - 1;
+
+        // For the first breadcrumb (Inicio), always set link (no importar si es el último)
+        const link = (i === 0) ? '/' : (isLast ? undefined : url);
+
         breadcrumbs.push({
           label: label,
-          link: isLast ? undefined : url || '/'
+          link: link
         });
 
-        console.log(`Added breadcrumb: ${label} -> ${url || '/'}`);
+        console.log(`Added breadcrumb: ${label} -> ${link || 'no link'}`);
       }
     }
 
