@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth';
+import { ToastService } from '../../services/toast.service';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -15,7 +16,8 @@ export class LoginComponent {
 
   constructor(
     private fb: FormBuilder,
-    private authService: AuthService
+    private authService: AuthService,
+    private toastService: ToastService
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -28,7 +30,7 @@ export class LoginComponent {
       this.authService.login(this.loginForm.value).subscribe({
         error: (err) => {
           console.error(err);
-          alert('Error en el login: ' + err.error.message);
+          this.toastService.showToast('Login', 'Error', 'Error en el login: ' + err.error.message, 'fa-solid fa-exclamation-triangle', 'bg-danger');
         }
       });
     }

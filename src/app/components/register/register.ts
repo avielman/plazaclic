@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth';
+import { ToastService } from '../../services/toast.service';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -17,7 +18,8 @@ export class RegisterComponent {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private toastService: ToastService
   ) {
     this.registerForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -30,12 +32,12 @@ export class RegisterComponent {
     if (this.registerForm.valid) {
       this.authService.register(this.registerForm.value).subscribe({
         next: () => {
-          alert('Registro exitoso!');
+          this.toastService.showToast('Registro', 'Éxito', 'Registro exitoso!', 'fa-solid fa-check', 'bg-success');
           this.router.navigate(['/login']);
         },
         error: (err) => {
           console.error(err);
-          alert('Error en el registro: ' + err.error.message);
+          this.toastService.showToast('Registro', 'Error', 'Error en el registro: ' + err.error.message, 'fa-solid fa-exclamation-triangle', 'bg-danger');
         }
       });
     }

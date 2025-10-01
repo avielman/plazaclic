@@ -6,6 +6,7 @@ import { ProductService } from '../../services/product';
 import { AuthService } from '../../services/auth';
 import { BrandService } from '../../services/brand';
 import { CategoryService } from '../../services/category';
+import { ToastService } from '../../services/toast.service';
 import { Product } from '../../models/product.model';
 import { Brand } from '../../models/brand.model';
 import { Category } from '../../models/category.model';
@@ -34,7 +35,8 @@ export class ProductFormComponent implements OnInit {
     private productService: ProductService,
     private authService: AuthService,
     private brandService: BrandService,
-    private categoryService: CategoryService
+    private categoryService: CategoryService,
+    private toastService: ToastService
   ) {
     this.productForm = this.fb.group({
       name: ['', Validators.required],
@@ -52,7 +54,7 @@ export class ProductFormComponent implements OnInit {
   ngOnInit(): void {
     this.currentUser = this.authService.getUser();
     if (!this.currentUser || this.currentUser.userType !== 'proveedor') {
-      alert('Acceso denegado. Solo proveedores pueden gestionar productos.');
+      this.toastService.showToast('Acceso', 'Error', 'Acceso denegado. Solo proveedores pueden gestionar productos.', 'fa-solid fa-ban', 'bg-danger');
       this.router.navigate(['/']);
       return;
     }
@@ -175,7 +177,7 @@ export class ProductFormComponent implements OnInit {
 
   onSubmit(): void {
     if (this.productForm.invalid) {
-      alert('Por favor, complete todos los campos requeridos.');
+      this.toastService.showToast('Formulario', 'Error', 'Por favor, complete todos los campos requeridos.', 'fa-solid fa-exclamation-triangle', 'bg-danger');
       return;
     }
 
@@ -197,12 +199,12 @@ export class ProductFormComponent implements OnInit {
       productData.id = this.productId!;
       this.productService.updateProduct(productData).subscribe({
         next: () => {
-          alert('Producto actualizado con éxito!');
+          this.toastService.showToast('Producto', 'Éxito', 'Producto actualizado con éxito!', 'fa-solid fa-check', 'bg-success');
           this.router.navigate(['/admin']);
         },
         error: (err) => {
           console.error('Error al actualizar producto:', err);
-          alert('Error al actualizar producto: ' + (err.error.message || 'Error desconocido'));
+          this.toastService.showToast('Producto', 'Error', 'Error al actualizar producto: ' + (err.error.message || 'Error desconocido'), 'fa-solid fa-exclamation-triangle', 'bg-danger');
         }
       });
     } else {
@@ -214,12 +216,12 @@ export class ProductFormComponent implements OnInit {
 
       this.productService.addProduct(productData).subscribe({
         next: () => {
-          alert('Producto agregado con éxito!');
+          this.toastService.showToast('Producto', 'Éxito', 'Producto agregado con éxito!', 'fa-solid fa-check', 'bg-success');
           this.router.navigate(['/admin']);
         },
         error: (err) => {
           console.error('Error al agregar producto:', err);
-          alert('Error al agregar producto: ' + (err.error.message || 'Error desconocido'));
+          this.toastService.showToast('Producto', 'Error', 'Error al agregar producto: ' + (err.error.message || 'Error desconocido'), 'fa-solid fa-exclamation-triangle', 'bg-danger');
         }
       });
     }

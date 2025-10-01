@@ -4,6 +4,7 @@ import { CommonModule, NgIf } from '@angular/common';
 import { ProductService } from '../../services/product';
 import { CartService } from '../../services/cart';
 import { FavoritesService } from '../../services/favorites.service';
+import { ToastService } from '../../services/toast.service';
 import { Product } from '../../models/product.model';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -27,7 +28,8 @@ export class ProductDetail implements OnInit {
     private router: Router,
     private productService: ProductService,
     private cartService: CartService,
-    private favoritesService: FavoritesService
+    private favoritesService: FavoritesService,
+    private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -95,8 +97,7 @@ export class ProductDetail implements OnInit {
   addToCart(): void {
     if (this.product) {
       this.cartService.addItem(this.product);
-      // Optional: Show success message or navigate to cart
-      alert('Producto agregado al carrito');
+      this.toastService.showToast('Carrito', 'Agregado', 'Producto agregado al carrito', 'fa-solid fa-cart-plus', 'bg-success');
     }
   }
 
@@ -108,9 +109,9 @@ export class ProductDetail implements OnInit {
     if (this.product) {
       const isFavorite = this.favoritesService.toggleFavorite(this.product);
       if (isFavorite) {
-        alert('Producto agregado a favoritos');
+        this.toastService.showToast('Favoritos', 'Agregado', 'Producto agregado a favoritos', 'fa-solid fa-heart', 'bg-primary');
       } else {
-        alert('Producto eliminado de favoritos');
+        this.toastService.showToast('Favoritos', 'Eliminado', 'Producto eliminado de favoritos', 'fa-regular fa-heart', 'bg-danger');
       }
     }
   }

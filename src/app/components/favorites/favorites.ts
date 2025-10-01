@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { CommonModule, NgIf } from '@angular/common';
 import { FavoritesService } from '../../services/favorites.service';
 import { CartService } from '../../services/cart';
+import { ToastService } from '../../services/toast.service';
 import { Product } from '../../models/product.model';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -20,7 +21,8 @@ export class FavoritesComponent implements OnInit, OnDestroy {
   constructor(
     private favoritesService: FavoritesService,
     private cartService: CartService,
-    private router: Router
+    private router: Router,
+    private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -52,7 +54,7 @@ export class FavoritesComponent implements OnInit, OnDestroy {
 
   addToCart(product: Product): void {
     this.cartService.addItem(product);
-    alert('Producto agregado al carrito');
+    this.toastService.showToast('Carrito', 'Agregado', 'Producto agregado al carrito', 'fa-solid fa-cart-plus', 'bg-success');
   }
 
   goToProducts(): void {

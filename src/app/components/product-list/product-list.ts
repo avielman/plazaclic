@@ -9,7 +9,7 @@ import { CartService } from '../../services/cart';
 import { FavoritesService } from '../../services/favorites.service';
 import { FormBuilder, FormGroup, ReactiveFormsModule, FormArray, FormControl } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import * as bootstrap from 'bootstrap';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-product-list',
@@ -23,18 +23,14 @@ export class ProductListComponent implements OnInit {
   filterForm: FormGroup;
   allBrands: string[] = [];
   allCategories: string[] = [];
-  toastHeader: string = '';
-  toastMensaje: string = '';
-  toastComponente: string = '';
-  toastIcono: string = '';
-  toastColor: string = 'bg-blue';
 
   constructor(
     private productService: ProductService,
     private route: ActivatedRoute,
     private cartService: CartService,
     private favoritesService: FavoritesService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private toastService: ToastService
   ) {
     this.filterForm = this.fb.group({
       minPrice: [null],
@@ -161,34 +157,17 @@ export class ProductListComponent implements OnInit {
 
   addToCart(product: Product): void {
     this.cartService.addItem(product);
-    //alert('Producto añadido al carrito!');
-    //Tosty
-    this.toastbtn('Productos', 'Guardado', 'Producto añadido al carrito', 'fa-solid fa-cart-plus', 'bg-toastGreen');
+    this.toastService.showToast('Productos', 'Guardado', 'Producto añadido al carrito', 'fa-solid fa-cart-plus', 'bg-success');
   }
 
-  toastbtn(aComponente: string, aHeader: string, aMensaje: string, aIcono: string, aColor: string) {
-    this.toastComponente = aComponente;
-    this.toastHeader = aHeader;
-    this.toastMensaje = aMensaje;
-    this.toastIcono = aIcono;
 
-    this.toastColor = aColor;
-
-    var toastElList = [].slice.call(document.querySelectorAll('.toast'))
-    var toastList = toastElList.map(function(toastEl) {
-      return new bootstrap.Toast(toastEl);
-    })
-    toastList.forEach(toast => toast.show());
-  }
 
   toggleFavorite(product: Product): void {
     const isFavorite = this.favoritesService.toggleFavorite(product);
     if (isFavorite) {
-      this.toastbtn('Favoritos', 'Guardado', 'Producto agregado a favoritos', 'fa-solid fa-heart', 'bg-toastBlue');
-      //alert('Producto agregado a favoritos');
+      this.toastService.showToast('Favoritos', 'Guardado', 'Producto agregado a favoritos', 'fa-solid fa-heart', 'bg-primary');
     } else {
-      this.toastbtn('Favoritos', 'Eliminado', 'Producto eliminado de favoritos', 'fa-regular fa-heart', 'bg-toastRed');
-      //alert('Producto eliminado de favoritos');
+      this.toastService.showToast('Favoritos', 'Eliminado', 'Producto eliminado de favoritos', 'fa-regular fa-heart', 'bg-danger');
     }
   }
 

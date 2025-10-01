@@ -29,13 +29,14 @@ export class BreadcrumbComponent implements OnInit {
       .subscribe(() => {
         console.log('NavigationEnd event detected, rebuilding breadcrumbs');
         this.breadcrumbs = this.buildBreadcrumbsFromRoute(this.activatedRoute.root);
+        this.breadcrumbs = this.addHomeToBreadcrumbs(this.breadcrumbs);
         console.log('Breadcrumbs generated:', this.breadcrumbs);
       });
 
-    // Initial breadcrumb creation
     console.log('Initial breadcrumb creation');
     this.breadcrumbs = this.buildBreadcrumbsFromRoute(this.activatedRoute.root);
     console.log('Initial breadcrumbs:', this.breadcrumbs);
+
   }
 
   private buildBreadcrumbsFromRoute(route: ActivatedRoute): Breadcrumb[] {
@@ -111,6 +112,18 @@ export class BreadcrumbComponent implements OnInit {
     return breadcrumbs;
   }
 
+  // agrega home al inicio del Breadcrumb
+  private addHomeToBreadcrumbs(breadcrumbs: Breadcrumb[]): Breadcrumb[] {
+    breadcrumbs.unshift({ label: 'Inicio', link: 'home' });
+
+    // 2. Si el array tiene más de un elemento Y el segundo elemento también es 'Inicio', lo eliminamos.
+    if (breadcrumbs.length > 1 && breadcrumbs[1].label === 'Inicio') {
+      // Elimina el duplicado que estaba en la posición [1]
+      breadcrumbs.splice(1, 1);
+    }
+
+    return breadcrumbs;
+  }
 
 
   private getBreadcrumbLabel(data: any, params?: any): string {
@@ -128,7 +141,7 @@ export class BreadcrumbComponent implements OnInit {
 
     // Custom mapping for routes
     const routeMap: { [key: string]: string } = {
-      '': 'Inicio',
+      'home': 'Inicio',
       'products': 'Productos',
       'cart': 'Carrito',
       'checkout': 'Checkout',

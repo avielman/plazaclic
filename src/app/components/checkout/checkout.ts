@@ -6,6 +6,7 @@ import { Observable } from 'rxjs';
 import { CartService, CartItem } from '../../services/cart';
 import { OrderService } from '../../services/order';
 import { AuthService } from '../../services/auth';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-checkout',
@@ -25,7 +26,8 @@ export class CheckoutComponent implements OnInit {
     private cartService: CartService,
     private orderService: OrderService,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private toastService: ToastService
   ) {
     this.checkoutForm = this.fb.group({
       name: ['', Validators.required],
@@ -53,13 +55,13 @@ export class CheckoutComponent implements OnInit {
 
   placeOrder(): void {
     if (this.checkoutForm.invalid) {
-      alert('Por favor, complete todos los campos requeridos.');
+      this.toastService.showToast('Checkout', 'Error', 'Por favor, complete todos los campos requeridos.', 'fa-solid fa-exclamation-triangle', 'bg-danger');
       return;
     }
 
     this.cartItems$.subscribe(items => {
       if (items.length === 0) {
-        alert('Tu carrito está vacío.');
+        this.toastService.showToast('Checkout', 'Aviso', 'Tu carrito está vacío.', 'fa-solid fa-info', 'bg-warning');
         this.router.navigate(['/products']);
         return;
       }
@@ -78,13 +80,13 @@ export class CheckoutComponent implements OnInit {
 
       this.orderService.placeOrder(orderData).subscribe({
         next: (response) => {
-          alert('Pedido realizado con éxito! ID: ' + response.id);
+          this.toastService.showToast('Pedido', 'Éxito', 'Pedido realizado con éxito! ID: ' + response.id, 'fa-solid fa-check', 'bg-success');
           this.cartService.clearCart();
           this.router.navigate(['/']);
         },
         error: (err) => {
           console.error('Error al realizar el pedido:', err);
-          alert('Error al realizar el pedido: ' + (err.error.message || 'Error desconocido'));
+          this.toastService.showToast('Pedido', 'Error', 'Error al realizar el pedido: ' + (err.error.message || 'Error desconocido'), 'fa-solid fa-exclamation-triangle', 'bg-danger');
         }
       });
     }).unsubscribe(); // Unsubscribe to prevent memory leaks
