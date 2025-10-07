@@ -1,5 +1,5 @@
 import { CompanyService } from './../../services/company';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgFor } from '@angular/common';
 import { ChangeDetectionStrategy, Component, NgModule, OnInit, signal } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, Validators } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
